@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+requests
+pandas
+pydantic
+opencv-python
+easyocr
+pyzbar
+python-multipart
+ujson
+structlog
+python-dotenv
+scikit-learn
+joblib
+numpy
+spacy
+https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1.tar.gz

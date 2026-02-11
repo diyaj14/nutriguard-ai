@@ -1,0 +1,181 @@
+[
+    {
+        "id": "3017624010701",
+        "product_name": "Nutella",
+        "energy_kcal_100g": 539,
+        "fat_100g": 30.9,
+        "saturated_fat_100g": 10.6,
+        "carbohydrates_100g": 57.5,
+        "sugars_100g": 56.3,
+        "proteins_100g": 6.3,
+        "fiber_100g": 0.0,
+        "salt_100g": 0.1075,
+        "nova_group": 0,
+        "nutrition_grades": "e",
+        "additives_count": 0,
+        "additives_tags": [],
+        "allergens_tags": [
+            "en:nuts"
+        ],
+        "traces_tags": [
+            "en:milk",
+            "en:nuts",
+            "en:soybeans"
+        ],
+        "ingredients_analysis_tags": [
+            "en:palm-oil-content-unknown",
+            "en:vegan-status-unknown",
+            "en:vegetarian-status-unknown"
+        ],
+        "categories_tags": [
+            "en:breakfasts",
+            "en:spreads",
+            "en:sweet-spreads",
+            "fr:pates-a-tartiner",
+            "en:hazelnut-spreads",
+            "en:chocolate-spreads",
+            "en:cocoa-and-hazelnuts-spreads",
+            "de:other"
+        ],
+        "labels_tags": [
+            "en:no-gluten"
+        ],
+        "quantity": "400.0 g",
+        "serving_size": ""
+    },
+    {
+        "id": "5449000000996",
+        "product_name": "Coke Original Taste",
+        "energy_kcal_100g": 42,
+        "fat_100g": 0,
+        "saturated_fat_100g": 0,
+        "carbohydrates_100g": 10.6,
+        "sugars_100g": 10.6,
+        "proteins_100g": 0,
+        "fiber_100g": 0.0,
+        "salt_100g": 0,
+        "nova_group": 4,
+        "nutrition_grades": "e",
+        "additives_count": 2,
+        "additives_tags": [
+            "en:e150d",
+            "en:e338"
+        ],
+        "allergens_tags": [],
+        "traces_tags": [],
+        "ingredients_analysis_tags": [
+            "en:palm-oil-free",
+            "en:maybe-vegan",
+            "en:maybe-vegetarian"
+        ],
+        "categories_tags": [
+            "en:beverages-and-beverages-preparations",
+            "en:beverages",
+            "en:carbonated-drinks",
+            "en:sodas",
+            "en:colas",
+            "pt:bebidas-cafeina"
+        ],
+        "labels_tags": [
+            "en:made-in-the-eu"
+        ],
+        "quantity": "0.0 kg",
+        "serving_size": "1 can (330 ml)"
+    },
+    {
+        "id": "3017620422003",
+        "product_name": "Nutella",
+        "energy_kcal_100g": 539,
+        "fat_100g": 30.9,
+        "saturated_fat_100g": 10.6,
+        "carbohydrates_100g": 57.5,
+        "sugars_100g": 56.3,
+        "proteins_100g": 6.3,
+        "fiber_100g": 0,
+        "salt_100g": 0.107,
+        "nova_group": 4,
+        "nutrition_grades": "e",
+        "additives_count": 2,
+        "additives_tags": [
+            "en:e322",
+            "en:e322i"
+        ],
+        "allergens_tags": [
+            "en:milk",
+            "en:nuts",
+            "en:soybeans"
+        ],
+        "traces_tags": [],
+        "ingredients_analysis_tags": [
+            "en:palm-oil",
+            "en:non-vegan",
+            "en:vegetarian"
+        ],
+        "categories_tags": [
+            "en:other"
+        ],
+        "labels_tags": [
+            "en:vegetarian",
+            "en:no-gluten",
+            "en:no-preservatives",
+            "en:no-hydrogenated-fats",
+            "fr:triman"
+        ],
+        "quantity": "400 g",
+        "serving_size": "15 g"
+    },
+    {
+        "id": "8000500310427",
+        "product_name": "Biscuits croquants au coeur onctueux de Nutella\u00ae",
+        "energy_kcal_100g": 515,
+        "fat_100g": 24.8,
+        "saturated_fat_100g": 11.5,
+        "carbohydrates_100g": 64,
+        "sugars_100g": 35.8,
+        "proteins_100g": 7.9,
+        "fiber_100g": 0.0,
+        "salt_100g": 0.559,
+        "nova_group": 4,
+        "nutrition_grades": "e",
+        "additives_count": 8,
+        "additives_tags": [
+            "en:e322",
+            "en:e322i",
+            "en:e450",
+            "en:e450i",
+            "en:e500",
+            "en:e500ii",
+            "en:e503",
+            "en:e503ii"
+        ],
+        "allergens_tags": [
+            "en:gluten",
+            "en:milk",
+            "en:nuts",
+            "en:soybeans"
+        ],
+        "traces_tags": [
+            "en:mustard"
+        ],
+        "ingredients_analysis_tags": [
+            "en:palm-oil",
+            "en:non-vegan",
+            "en:vegetarian"
+        ],
+        "categories_tags": [
+            "en:snacks",
+            "en:sweet-snacks",
+            "en:biscuits-and-cakes",
+            "en:biscuits-and-crackers",
+            "en:biscuits",
+            "en:biscuits-cookies-shelf-stable",
+            "fr:biscoitos-recheados"
+        ],
+        "labels_tags": [
+            "en:vegetarian",
+            "fr:ponto-verde"
+        ],
+        "quantity": "304 g",
+        "serving_size": "13,8 g"
+    }
+]

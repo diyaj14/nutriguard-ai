@@ -1,0 +1,381 @@
+Excellent — now we formalize this properly.
+
+Using the **Open Food Facts API structure**, we will:
+
+1. Identify exactly which API fields become **model inputs**
+2. Define the **Product Feature Vector (P)**
+3. Define the **User Health Vector (U)**
+4. Formulate the **mathematical personalization function**
+
+Source API reference: Open Food Facts
+
+---
+
+# 🔹 STAGE 1 — DEFINE THE PROBLEM MATHEMATICALLY
+
+We define the personalization engine as:
+
+[
+S = f(P, U)
+]
+
+Where:
+
+* ( P ) = Product feature vector (from OpenFoodFacts API)
+* ( U ) = User health profile vector
+* ( S \in [0,100] ) = Suitability score
+
+---
+
+# 🧩 STEP 1 — WHAT TO EXTRACT FROM OPENFOODFACTS API
+
+From the API response:
+
+```
+GET /api/v2/product/{barcode}
+```
+
+We select only fields relevant for health scoring.
+
+---
+
+## 🔹 A. Core Nutrition Inputs (`nutriments` object)
+
+Use **per 100g values** only (standardized).
+
+### Mandatory Nutrients
+
+From `nutriments`:
+
+* energy-kcal_100g
+* fat_100g
+* saturated-fat_100g
+* carbohydrates_100g
+* sugars_100g
+* proteins_100g
+* fiber_100g
+* salt_100g (or sodium_100g if available)
+
+These are primary continuous features.
+
+---
+
+## 🔹 B. Processing & Health Indicators
+
+From root object:
+
+* nova_group (1–4 processing scale)
+* nutrition_grades (Nutri-Score A–E)
+* additives_tags
+* ingredients_analysis_tags
+* allergens_tags
+* traces_tags
+
+---
+
+## 🔹 C. Product Metadata (Contextual)
+
+* categories_tags
+* labels_tags (organic, gluten-free, etc.)
+* quantity
+* serving_size (if available)
+
+---
+
+# 🧠 STEP 2 — BUILD PRODUCT FEATURE VECTOR (P)
+
+We now convert API fields into ML-ready numeric representation.
+
+---
+
+## 🔹 Product Vector Structure
+
+[
+P = [N, A, H, C]
+]
+
+Where:
+
+### 1️⃣ N — Nutritional Density Vector (Continuous)
+
+[
+N =
+\begin{bmatrix}
+energy \
+sugar \
+salt \
+saturated_fat \
+protein \
+fiber
+\end{bmatrix}
+]
+
+All normalized per 100g.
+
+---
+
+### 2️⃣ A — Additive & Processing Vector
+
+[
+A =
+\begin{bmatrix}
+additive_count \
+nova_group \
+ultra_processed_flag
+\end{bmatrix}
+]
+
+---
+
+### 3️⃣ H — Allergen & Ingredient Flags (Binary)
+
+For common allergens:
+
+[
+H =
+\begin{bmatrix}
+contains_peanut \
+contains_gluten \
+contains_milk \
+contains_soy \
+contains_egg \
+contains_shellfish
+\end{bmatrix}
+]
+
+Extracted from:
+
+* `allergens_tags`
+* `traces_tags`
+
+---
+
+### 4️⃣ C — Category Encoding
+
+One-hot or embedding of:
+
+* snack
+* beverage
+* spice
+* dairy
+* cereal
+* ready-meal
+* etc.
+
+This prevents unfair penalization across categories.
+
+---
+
+### Final Product Vector
+
+[
+P \in \mathbb{R}^{n}
+]
+
+Typically 20–40 dimensions.
+
+---
+
+# 🧑‍⚕️ STEP 3 — DEFINE USER HEALTH VECTOR (U)
+
+This is where personalization happens.
+
+User inputs must reflect conditions affected by nutrition.
+
+---
+
+## 🔹 User Health Inputs Required
+
+### 1️⃣ Medical Conditions (Binary)
+
+[
+U_m =
+\begin{bmatrix}
+hypertension \
+diabetes \
+high_cholesterol \
+heart_disease \
+kidney_disease \
+obesity
+\end{bmatrix}
+]
+
+---
+
+### 2️⃣ Allergies (Binary)
+
+[
+U_a =
+\begin{bmatrix}
+peanut_allergy \
+gluten_intolerance \
+lactose_intolerance \
+soy_allergy \
+egg_allergy
+\end{bmatrix}
+]
+
+---
+
+### 3️⃣ Fitness Goals (Binary)
+
+[
+U_f =
+\begin{bmatrix}
+high_protein_goal \
+weight_loss_goal \
+muscle_gain_goal \
+low_carb_goal
+\end{bmatrix}
+]
+
+---
+
+### 4️⃣ Sensitivity Weights (Optional Advanced Layer)
+
+Instead of just binary:
+
+[
+U_s =
+\begin{bmatrix}
+sodium_sensitivity \
+sugar_sensitivity \
+fat_sensitivity
+\end{bmatrix}
+]
+
+These can be continuous values (0–1).
+
+---
+
+### Final User Vector
+
+[
+U \in \mathbb{R}^{m}
+]
+
+Typically 15–25 dimensions.
+
+---
+
+# 🧮 STEP 4 — DEFINE PERSONALIZATION FUNCTION
+
+Now define scoring formally.
+
+---
+
+## Basic Functional Form
+
+[
+S = \sigma ( W_p P + W_u U + W_{int} (P \odot U) )
+]
+
+Where:
+
+* ( W_p ) = product feature weights
+* ( W_u ) = user feature weights
+* ( P \odot U ) = interaction terms
+* ( \sigma ) = bounded activation → scale to [0,100]
+
+---
+
+## Practical ML Version
+
+Concatenate:
+
+[
+X = [P | U]
+]
+
+Train:
+
+[
+S = f_{\theta}(X)
+]
+
+Where:
+
+* ( f_{\theta} ) = Gradient Boosting / MLP
+* ( \theta ) = learned parameters
+
+---
+
+# 🔬 STEP 5 — HARD CONSTRAINT LAYER
+
+Before ML prediction:
+
+If:
+
+[
+peanut_allergy = 1 \land contains_peanut = 1
+]
+
+Then:
+
+[
+S = 0
+]
+
+This safety layer must override ML.
+
+---
+
+# 🎯 FINAL PROBLEM DEFINITION
+
+Given:
+
+* Product JSON from OpenFoodFacts API
+* User health profile
+
+Construct:
+
+[
+P \in \mathbb{R}^{n}, \quad U \in \mathbb{R}^{m}
+]
+
+Compute:
+
+[
+S = f(P, U)
+]
+
+Subject to:
+
+[
+S \in [0,100]
+]
+
+With hard safety constraints.
+
+---
+
+# 🧠 SUMMARY — EXACT REQUIRED INPUTS
+
+## From OpenFoodFacts API
+
+Mandatory:
+
+* nutriments (energy, sugar, salt, fat, protein, fiber)
+* nova_group
+* nutrition_grades
+* additives_tags
+* allergens_tags
+* categories_tags
+
+## From User
+
+Mandatory:
+
+* health conditions
+* allergies
+* fitness goals
+
+Optional:
+
+* sensitivity weights
+* age
+* daily calorie target
+
+---
+
+

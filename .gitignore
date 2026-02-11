@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.env
+
+# Backend specific
+backend/__pycache__/
+backend/*.pyc
+backend/test_*.py
+backend/debug_*.py
+backend/generate_*.py
+backend/extract_*.py
+backend/test_image.jpg
+
+# Model files (optional - uncomment if model is too large)
+# backend/personalization_model.pkl
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
