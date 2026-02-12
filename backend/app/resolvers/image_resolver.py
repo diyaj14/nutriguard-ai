@@ -1,36 +1,59 @@
 import cv2
 import numpy as np
-from pyzbar.pyzbar import decode
-import easyocr
 import requests
 from ..models.schemas import ProductResponse, NutritionInfo
 from ..utils.normalizer import normalize_nutrition, normalize_ingredients, extract_additives
 from typing import Optional, List
 from difflib import get_close_matches
 
-# Initialize EasyOCR reader (this will download model on first run)
-# We initialize it lazily or here if we expect frequent usage.
-# For now, let's initialize it globally to avoid reloading on every request, 
-# but wrap in try-except in case of issues.
+# Optional dependencies for image processing
 try:
-    reader = easyocr.Reader(['en'])
-except Exception as e:
-    print(f"Warning: EasyOCR intialization failed: {e}")
-    reader = None
+    from pyzbar.pyzbar import decode as pyzbar_decode
+    PYZBAR_AVAILABLE = True
+except ImportError:
+    PYZBAR_AVAILABLE = False
+    print("⚠️ Warning: pyzbar not installed. Image barcode scanning will be disabled.")
+
+try:
+    import easyocr
+    EASYOCR_AVAILABLE = True
+except ImportError:
+    EASYOCR_AVAILABLE = False
+    print("⚠️ Warning: easyocr not installed. OCR will be disabled.")
+
+# Initialize EasyOCR reader lazily/globally if available
+reader = None
+if EASYOCR_AVAILABLE:
+    try:
+        # GPU=False for server environments to avoid CUDA issues
+        reader = easyocr.Reader(['en'], gpu=False)
+    except Exception as e:
+        print(f"⚠️ Warning: EasyOCR initialization failed: {e}")
+        EASYOCR_AVAILABLE = False
 
 def decode_barcode_from_image(image_bytes: bytes) -> Optional[str]:
     """
     Decodes barcode from an image byte stream.
+    Requires pyzbar to be installed.
     """
+    if not PYZBAR_AVAILABLE:
+        print("❌ decode_barcode_from_image called but pyzbar is missing.")
+        return None
+        
     try:
         nparr = np.frombuffer(image_bytes, np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_GRAYSCALE)
         
-        decoded_objects = decode(img)
+        if img is None:
+            print("❌ Failed to decode image bytes to image")
+            return None
+            
+        decoded_objects = pyzbar_decode(img)
         for obj in decoded_objects:
             return obj.data.decode('utf-8')
+            
     except Exception as e:
-        print(f"Error decoding barcode: {e}")
+        print(f"❌ Error decoding barcode: {e}")
     return None
 
 def search_product_by_name(query: str) -> Optional[ProductResponse]:
