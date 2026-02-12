@@ -3,18 +3,11 @@ from pydantic import BaseModel
 from typing import Optional
 import uvicorn
 
-# Adjust imports to work when running from 'backend' folder
-try:
-    from app.resolvers.barcode_resolver import resolve_by_barcode
-    from app.resolvers.image_resolver import resolve_by_image
-    from app.models.schemas import ProductResponse, UserProfile, PersonalizedProductResponse
-    from app.utils.personalization import get_personalization_engine
-except ImportError:
-    # Fallback for running directly or differently
-    from resolvers.barcode_resolver import resolve_by_barcode
-    from resolvers.image_resolver import resolve_by_image
-    from models.schemas import ProductResponse, UserProfile, PersonalizedProductResponse
-    from utils.personalization import get_personalization_engine
+# Standard relative imports for package structure
+from .resolvers.barcode_resolver import resolve_by_barcode
+from .resolvers.image_resolver import resolve_by_image
+from .models.schemas import ProductResponse, UserProfile, PersonalizedProductResponse
+from .utils.personalization import get_personalization_engine
 
 # Load environment variables
 from dotenv import load_dotenv
