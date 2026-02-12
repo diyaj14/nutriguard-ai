@@ -1,7 +1,7 @@
 """
 ML Model Integration Module for Personalized Food Scoring
 """
-import pandas as pd
+import numpy as np
 import joblib
 import os
 from typing import Dict, Tuple, List
@@ -10,6 +10,18 @@ class PersonalizationEngine:
     """
     Handles loading the ML model and making personalized predictions.
     """
+    
+    # Define feature order (must match training order)
+    FEATURE_ORDER = [
+        # Product features
+        'energy_kcal_100g', 'sugar_100g', 'fat_100g', 'saturated_fat_100g',
+        'salt_100g', 'fiber_100g', 'protein_100g', 'nova_group',
+        'contains_gluten', 'contains_peanut', 'contains_milk', 'contains_egg',
+        # User features
+        'has_hypertension', 'has_diabetes', 'has_high_cholesterol',
+        'gluten_intolerance', 'peanut_allergy', 'lactose_intolerance',
+        'egg_allergy', 'goal_weight_loss', 'goal_muscle_gain'
+    ]
     
     def __init__(self, model_path: str = None):
         """Initialize the personalization engine."""
@@ -192,10 +204,13 @@ class PersonalizationEngine:
             try:
                 # Combine features into single row
                 combined = {**product_features, **user_features}
-                input_df = pd.DataFrame([combined])
+                
+                # Create feature array in correct order (no pandas needed!)
+                feature_values = [combined.get(feat, 0) for feat in self.FEATURE_ORDER]
+                input_array = np.array([feature_values])
                 
                 # Predict
-                score = self.model.predict(input_df)[0]
+                score = self.model.predict(input_array)[0]
                 
                 # Generate explanations (basic version - can be enhanced)
                 reasons, warnings = self._generate_explanations(product_features, user_features, score)
