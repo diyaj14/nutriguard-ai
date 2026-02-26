@@ -3,71 +3,65 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { motion } from 'framer-motion';
 import { NeuralFood } from './NeuralFood';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 
 export function Hero({ onStart, onLearnMore }) {
     return (
-        <section className="relative h-[90vh] md:h-screen flex flex-col justify-end md:justify-center items-center overflow-hidden bg-gradient-to-b from-background via-gray-900 to-black pb-20 md:pb-0">
+        <section className="relative min-h-[100svh] flex flex-col justify-center items-center overflow-hidden bg-black pt-24 md:pt-0">
 
-            {/* 3D Neural Food Background - Adjusted for mobile */}
-            <div className="absolute inset-0 z-0 opacity-50 md:opacity-60">
-                <Canvas>
-                    <Suspense fallback={null}>
-                        <NeuralFood />
-                        <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} />
-                    </Suspense>
-                </Canvas>
+            {/* Background Image with Effects */}
+            <div className="absolute inset-0 z-0">
+                <img
+                    src="/hero-bg.png"
+                    alt="Hero Background"
+                    className="w-full h-full object-cover opacity-60 scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black via-black/40 to-black z-0"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(22,224,160,0.15)_0%,transparent_70%)] z-0"></div>
             </div>
 
-            {/* Gradient Overlay for Text Readability on Mobile */}
-            <div className="absolute bottom-0 left-0 right-0 h-3/4 bg-gradient-to-t from-background via-background/80 to-transparent z-0 md:hidden"></div>
-
             {/* Text Content */}
-            <div className="relative z-10 text-center px-6 w-full max-w-lg mx-auto">
+            <div className="relative z-10 text-center px-6 w-full max-w-5xl mx-auto mt-20 md:mt-0 flex flex-col items-center">
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                     className="flex flex-col items-center"
                 >
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-6 animate-fade-in-up">
-                        <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                        <span className="text-xs text-primary font-medium tracking-wide">AI-POWERED ANALYSIS</span>
-                    </div>
+                    <a href="#scan" className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl mb-8 shadow-2xl hover:bg-white/10 transition-colors cursor-pointer animate-fade-in-up">
+                        <Sparkles className="w-4 h-4 text-primary" />
+                        <span className="text-sm text-gray-200 font-bold tracking-wide">Next-Gen AI Nutrition Scanner</span>
+                        <ArrowRight className="w-3 h-3 text-gray-400 ml-1" />
+                    </a>
 
-                    <h1 className="text-4xl md:text-7xl font-extrabold mb-4 leading-tight font-heading">
-                        <span className="block text-white">Eat Smarter.</span>
-                        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold mb-6 leading-[1.1] font-heading tracking-tight drop-shadow-2xl">
+                        <span className="block text-white mb-2">Eat Smarter.</span>
+                        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary via-emerald-400 to-secondary animate-pulse-slow">
                             Live Better.
                         </span>
                     </h1>
 
-                    <p className="text-base md:text-2xl text-gray-300 mb-8 font-light leading-relaxed max-w-sm mx-auto">
-                        Scan any food barcode. Get instant, personalized health scores based on <span className="text-white font-medium">your unique DNA.</span>
+                    <p className="text-lg md:text-2xl text-gray-300 mb-12 font-medium leading-relaxed max-w-2xl mx-auto drop-shadow-lg">
+                        Scan any food barcode. Get instant, personalized health scores powered by <span className="text-primary font-bold">clinical intelligence</span> and your unique DNA profile.
                     </p>
 
                     <motion.div
-                        className="w-full flex flex-col gap-3"
+                        className="w-full flex flex-col sm:flex-row justify-center gap-4 sm:gap-6"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4, duration: 0.6 }}
                     >
                         <button
                             onClick={onStart}
-                            className="w-full py-4 bg-primary text-black font-bold rounded-2xl shadow-[0_0_20px_rgba(22,224,160,0.4)] hover:shadow-[0_0_40px_rgba(22,224,160,0.6)] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 text-lg"
+                            className="px-8 py-5 bg-gradient-to-r from-primary to-emerald-400 text-black font-extrabold rounded-full shadow-[0_0_40px_rgba(22,224,160,0.4)] hover:shadow-[0_0_60px_rgba(22,224,160,0.6)] hover:-translate-y-1 active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 text-lg md:w-auto w-full group"
                         >
-                            Start Scan
-                            <ArrowRight className="w-5 h-5" />
-                        </button>
-                        <button
-                            onClick={onLearnMore}
-                            className="w-full py-4 bg-white/5 border border-white/10 text-white font-medium rounded-2xl active:bg-white/10 transition-all duration-300 backdrop-blur-sm"
-                        >
-                            See How It Works
+                            Try Demo Sandbox
+                            <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
                         </button>
                     </motion.div>
                 </motion.div>
             </div>
+
         </section>
     );
 }

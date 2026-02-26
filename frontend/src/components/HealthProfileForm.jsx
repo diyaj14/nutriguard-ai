@@ -97,7 +97,7 @@ export function HealthProfileForm({ onComplete }) {
     );
 
     return (
-        <div className="w-full max-w-lg mx-auto h-full flex flex-col justify-between pt-10 pb-20 px-6">
+        <div className="w-full max-w-lg mx-auto flex flex-col pt-10 pb-10 px-4">
             <div className="flex-1 flex flex-col items-center">
 
                 {/* Progress Indicator */}

@@ -1,69 +1,58 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ScanLine, Database, Activity, Layers } from 'lucide-react';
+import { Scan, Activity, ShieldCheck, BarChart3 } from 'lucide-react';
 
 const steps = [
     {
-        icon: <ScanLine className="w-8 h-8 text-primary" />,
-        title: "1. Scan",
-        desc: "Scan product barcode.",
+        number: '01',
+        title: 'Scan Any Barcode',
+        desc: 'Point your camera at any food product. Our AI reads the barcode instantly.',
+        icon: Scan,
     },
     {
-        icon: <Database className="w-8 h-8 text-secondary" />,
-        title: "2. Extract",
-        desc: "AI gets nutrition data.",
+        number: '02',
+        title: 'DNA-Matched Analysis',
+        desc: 'Your genetic profile meets nutritional data — personalized scoring in seconds.',
+        icon: Activity,
     },
     {
-        icon: <Activity className="w-8 h-8 text-warning" />,
-        title: "3. Score",
-        desc: "Match with your health.",
+        number: '03',
+        title: 'Health Score',
+        desc: "Get a clear, actionable health score. Know exactly what's good for your body.",
+        icon: ShieldCheck,
     },
     {
-        icon: <Layers className="w-8 h-8 text-danger" />,
-        title: "4. Swap",
-        desc: "Get better options.",
+        number: '04',
+        title: 'Track Progress',
+        desc: 'Build healthier habits over time with detailed nutrition tracking and insights.',
+        icon: BarChart3,
     }
 ];
 
 export function HowItWorks() {
     return (
-        <section className="h-full w-full flex flex-col items-center justify-center px-6 pb-24">
-            <motion.div
-                className="text-center mb-10"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-            >
-                <h2 className="text-3xl font-heading font-bold text-white mb-2">
-                    The Process
-                </h2>
-                <p className="text-gray-400 text-sm">
-                    From scan to score in milliseconds.
-                </p>
-            </motion.div>
-
-            <div className="w-full max-w-md space-y-4">
-                {steps.map((step, idx) => (
-                    <motion.div
-                        key={idx}
-                        className="flex items-center p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-lg"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.1 }}
-                    >
-                        <div className="w-12 h-12 rounded-xl bg-black/40 flex items-center justify-center mr-5 border border-white/5 flex-shrink-0">
-                            {step.icon}
-                        </div>
-
-                        <div>
-                            <h3 className="text-lg font-bold text-white mb-1">
-                                {step.title}
-                            </h3>
-                            <p className="text-gray-400 text-sm">
-                                {step.desc}
-                            </p>
-                        </div>
-                    </motion.div>
-                ))}
+        <section id="how-it-works" className="py-24 bg-black relative">
+            <div className="max-w-7xl mx-auto px-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {steps.map((step, idx) => (
+                        <motion.div
+                            key={idx}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: idx * 0.1 }}
+                            className="bg-[#0D1117] border border-white/5 p-8 md:p-10 rounded-[2.5rem] flex items-start gap-8 group hover:border-primary/20 transition-all"
+                        >
+                            <div className="w-20 h-20 bg-[#16211C] rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
+                                <step.icon className="w-10 h-10 text-primary group-hover:text-black transition-colors" />
+                            </div>
+                            <div>
+                                <span className="text-gray-500 font-bold text-lg mb-2 block">{step.number}</span>
+                                <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 tracking-tight">{step.title}</h3>
+                                <p className="text-gray-400 text-lg leading-relaxed">{step.desc}</p>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
             </div>
         </section>
     );
