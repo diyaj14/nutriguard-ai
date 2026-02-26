@@ -69,25 +69,25 @@ export function HealthProfileForm({ onComplete }) {
     ];
 
     const renderChips = (items, selectedList, toggleFn, isGoal = false) => (
-        <div className="flex flex-wrap gap-4 justify-center">
+        <div className="flex flex-wrap gap-2 justify-center">
             {items.map(item => {
                 const isSelected = isGoal ? profile[item.id] : selectedList.includes(item.id);
                 return (
                     <button
                         key={item.id}
                         onClick={() => toggleFn(item.id)}
-                        className={`relative px-6 py-4 rounded-full border-2 flex items-center gap-3 transition-all duration-300 transform active:scale-95 shadow-lg
+                        className={`relative px-4 py-3 rounded-2xl border-2 flex items-center gap-2 transition-all duration-300 transform active:scale-95 shadow-md
                         ${isSelected
-                                ? 'bg-primary/10 border-primary text-white shadow-[0_0_20px_rgba(22,224,160,0.3)]'
-                                : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/30'
+                                ? 'bg-primary/20 border-primary text-white shadow-[0_0_15px_rgba(22,224,160,0.2)]'
+                                : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/20'
                             }
                     `}
                     >
-                        <span className={`${isSelected ? 'text-primary' : 'text-gray-500'}`}>{item.icon}</span>
-                        <span className="font-semibold text-sm tracking-wide">{item.label}</span>
+                        <span className={`${isSelected ? 'text-primary' : 'text-gray-500'} scale-90`}>{item.icon}</span>
+                        <span className="font-bold text-xs tracking-tight">{item.label}</span>
                         {isSelected && (
                             <div className="absolute -top-1 -right-1 bg-primary text-black rounded-full p-0.5">
-                                <Check className="w-3 h-3" />
+                                <Check className="w-2.5 h-2.5" />
                             </div>
                         )}
                     </button>
@@ -97,13 +97,12 @@ export function HealthProfileForm({ onComplete }) {
     );
 
     return (
-        <div className="w-full max-w-lg mx-auto flex flex-col pt-10 pb-10 px-4">
+        <div className="w-full max-w-lg mx-auto flex flex-col pt-2 pb-2 px-2">
             <div className="flex-1 flex flex-col items-center">
-
                 {/* Progress Indicator */}
-                <div className="flex gap-2 mb-8">
+                <div className="flex gap-1.5 mb-6">
                     {[0, 1, 2, 3].map(i => (
-                        <div key={i} className={`h-1.5 rounded-full transition-all duration-500 ${i <= step ? 'w-8 bg-primary' : 'w-2 bg-white/10'}`} />
+                        <div key={i} className={`h-1 rounded-full transition-all duration-500 ${i <= step ? 'w-6 bg-primary' : 'w-1.5 bg-white/10'}`} />
                     ))}
                 </div>
 
@@ -116,8 +115,8 @@ export function HealthProfileForm({ onComplete }) {
                             exit={{ opacity: 0, scale: 0.9 }}
                             className="w-full text-center"
                         >
-                            <h2 className="text-3xl font-heading font-bold text-white mb-2">How old are you?</h2>
-                            <p className="text-gray-400 mb-12">Drag the dial to adjust.</p>
+                            <h2 className="text-2xl font-heading font-bold text-white mb-1">How old are you?</h2>
+                            <p className="text-gray-400 mb-6 text-sm">Drag the dial to adjust.</p>
                             <CircularAgeInput value={profile.age} onChange={v => setProfile({ ...profile, age: v })} />
                         </motion.div>
                     )}
@@ -130,8 +129,8 @@ export function HealthProfileForm({ onComplete }) {
                             exit={{ opacity: 0, x: -20 }}
                             className="w-full text-center"
                         >
-                            <h2 className="text-3xl font-heading font-bold text-white mb-2">Any Conditions?</h2>
-                            <p className="text-gray-400 mb-8">Select all that apply.</p>
+                            <h2 className="text-2xl font-heading font-bold text-white mb-1">Any Conditions?</h2>
+                            <p className="text-gray-400 mb-6 text-sm">Select all that apply.</p>
                             {renderChips(conditions, profile.health_conditions, toggleCondition)}
                         </motion.div>
                     )}
@@ -144,8 +143,8 @@ export function HealthProfileForm({ onComplete }) {
                             exit={{ opacity: 0, x: -20 }}
                             className="w-full text-center"
                         >
-                            <h2 className="text-3xl font-heading font-bold text-white mb-2">Any Allergies?</h2>
-                            <p className="text-gray-400 mb-8">We will filter these out for you.</p>
+                            <h2 className="text-2xl font-heading font-bold text-white mb-1">Any Allergies?</h2>
+                            <p className="text-gray-400 mb-6 text-sm">We will filter these out.</p>
                             {renderChips(allergies, profile.allergies, toggleAllergy)}
                         </motion.div>
                     )}
@@ -158,37 +157,37 @@ export function HealthProfileForm({ onComplete }) {
                             exit={{ opacity: 0, x: -20 }}
                             className="w-full text-center"
                         >
-                            <h2 className="text-3xl font-heading font-bold text-white mb-2">Your Goals?</h2>
-                            <p className="text-gray-400 mb-8">What are you striving for?</p>
+                            <h2 className="text-2xl font-heading font-bold text-white mb-1">Your Goals?</h2>
+                            <p className="text-gray-400 mb-6 text-sm">What are you striving for?</p>
                             {renderChips(goals, null, toggleGoal, true)}
                         </motion.div>
                     )}
                 </AnimatePresence>
             </div>
 
-            <div className="w-full mt-8">
+            <div className="w-full mt-6">
                 {step < 3 ? (
                     <button
                         onClick={nextStep}
-                        className="w-full py-5 bg-gradient-to-r from-primary to-emerald-500 rounded-full text-black font-bold text-lg shadow-[0_0_25px_rgba(22,224,160,0.4)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
+                        className="w-full py-4 bg-gradient-to-r from-primary to-emerald-500 rounded-2xl text-black font-bold text-base shadow-[0_0_20px_rgba(22,224,160,0.3)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
                     >
-                        Continue <ChevronRight className="w-5 h-5" />
+                        Continue <ChevronRight className="w-4 h-4" />
                     </button>
                 ) : (
                     <button
                         onClick={() => onComplete(profile)}
-                        className="w-full py-5 bg-gradient-to-r from-secondary to-blue-500 rounded-full text-white font-bold text-lg shadow-[0_0_25px_rgba(0,194,255,0.4)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
+                        className="w-full py-4 bg-gradient-to-r from-secondary to-blue-500 rounded-2xl text-white font-bold text-base shadow-[0_0_20px_rgba(0,194,255,0.3)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
                     >
-                        Finish & Start Scan <Check className="w-5 h-5" />
+                        Finish & Start Scan <Check className="w-4 h-4" />
                     </button>
                 )}
 
                 {step > 0 && (
                     <button
                         onClick={prevStep}
-                        className="w-full py-3 mt-2 text-gray-500 hover:text-white transition-colors flex items-center justify-center gap-2"
+                        className="w-full py-2 mt-2 text-gray-500 hover:text-white transition-colors flex items-center justify-center gap-2 text-xs"
                     >
-                        <ChevronLeft className="w-4 h-4" /> Back
+                        <ChevronLeft className="w-3 h-3" /> Back
                     </button>
                 )}
             </div>

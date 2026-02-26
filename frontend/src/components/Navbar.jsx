@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, Menu, X, ArrowRight, Scan, User, BarChart2 } from 'lucide-react';
+import { Activity, Menu, X, ArrowRight, Scan, User, Shield, BarChart2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function Navbar({ onGoHome, isAppActive, onToggleProfile, currentView, hasProfile }) {
@@ -24,14 +24,18 @@ export function Navbar({ onGoHome, isAppActive, onToggleProfile, currentView, ha
 
     return (
         <>
-            <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${mobileMenuOpen ? 'bg-transparent py-4' : isScrolled ? 'bg-[#0B0F14]/90 backdrop-blur-2xl border-b border-white/5 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.5)]' : 'bg-transparent py-6'}`}>
+            <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${mobileMenuOpen ? 'bg-transparent py-4' : isScrolled ? 'glass-navbar py-3 shadow-[0_10px_40px_rgba(0,0,0,0.5)]' : 'bg-transparent py-6'}`}>
                 <div className="max-w-7xl mx-auto px-6 flex items-center justify-between relative z-[110]">
-                    <a href="#home" onClick={(e) => { e.preventDefault(); onGoHome(); }} className="flex items-center gap-2 group">
-                        <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20 group-hover:bg-primary transition-all duration-500">
-                            <Activity className="text-primary w-6 h-6 group-hover:text-black transition-colors" />
+                    <a href="#home" onClick={(e) => { e.preventDefault(); onGoHome(); }} className="flex items-center gap-3 group">
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full group-hover:bg-primary/40 transition-all duration-500"></div>
+                            <div className="relative w-11 h-11 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-xl flex items-center justify-center border border-white/10 shadow-2xl group-hover:scale-110 transition-all duration-500 overflow-hidden">
+                                <div className="absolute inset-0 bg-gradient-to-br from-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                <Shield className="text-primary w-6 h-6 z-10 filter drop-shadow-[0_0_8px_rgba(22,224,160,0.6)]" />
+                            </div>
                         </div>
-                        <span className="font-heading font-bold text-2xl tracking-tight text-white flex items-center gap-2">
-                            NutriGuard <span className="text-primary text-[10px] font-black bg-primary/10 px-2.5 py-1 rounded-full border border-primary/20 tracking-widest uppercase">AI</span>
+                        <span className="font-heading font-black text-2xl tracking-tight text-white flex items-center gap-2">
+                            NutriGuard <span className="text-primary text-[10px] font-black bg-primary/10 px-2.5 py-1 rounded-full border border-primary/20 tracking-widest uppercase shadow-[0_0_15px_rgba(22,224,160,0.2)]">AI</span>
                         </span>
                     </a>
 

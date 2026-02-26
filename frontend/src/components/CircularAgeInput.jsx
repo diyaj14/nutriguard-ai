@@ -33,19 +33,19 @@ export function CircularAgeInput({ value, onChange }) {
     };
 
     return (
-        <div className="relative w-64 h-64 mx-auto flex items-center justify-center select-none touch-none">
+        <div className="relative w-48 h-48 mx-auto flex items-center justify-center select-none touch-none">
             {/* Glow / Track */}
-            <div ref={constraintsRef} className="absolute inset-0 rounded-full border-4 border-white/5 shadow-[0_0_50px_rgba(22,224,160,0.1)]"></div>
+            <div ref={constraintsRef} className="absolute inset-0 rounded-full border-4 border-white/5 shadow-[0_0_30px_rgba(22,224,160,0.1)]"></div>
 
-            {/* Active Arc (Simplified visual representation) */}
+            {/* Active Arc */}
             <svg className="absolute inset-0 w-full h-full transform -rotate-90 pointer-events-none">
                 <circle
-                    cx="128" cy="128" r="110"
+                    cx="96" cy="96" r="80"
                     fill="transparent"
                     stroke="#16E0A0"
                     strokeWidth="4"
-                    strokeDasharray={2 * Math.PI * 110}
-                    strokeDashoffset={2 * Math.PI * 110 * (1 - (value - 18) / (80 - 18))}
+                    strokeDasharray={2 * Math.PI * 80}
+                    strokeDashoffset={2 * Math.PI * 80 * (1 - (value - 18) / (80 - 18))}
                     strokeLinecap="round"
                     className="transition-all duration-75"
                 />
@@ -60,18 +60,16 @@ export function CircularAgeInput({ value, onChange }) {
                 dragElastic={0}
                 dragMomentum={false}
                 onDrag={handleDrag}
-            // Invisible big drag area, the actual visual is the knob below
             >
-                {/* visual knob at top (0 deg visual) which is rotated by parent div */}
-                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-black border-2 border-primary rounded-full shadow-[0_0_15px_rgba(22,224,160,0.8)] z-10 flex items-center justify-center">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-black border-2 border-primary rounded-full shadow-[0_0_10px_rgba(22,224,160,0.7)] z-10 flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
                 </div>
             </motion.div>
 
             {/* Center Text */}
             <div className="text-center z-0 pointer-events-none">
-                <span className="text-gray-500 text-xs uppercase tracking-widest font-bold block mb-1">Age</span>
-                <span className="text-6xl font-bold text-white tabular-nums drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
+                <span className="text-gray-500 text-[10px] uppercase tracking-widest font-extrabold block mb-0">Age</span>
+                <span className="text-5xl font-black text-white tabular-nums drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]">
                     {value}
                 </span>
             </div>

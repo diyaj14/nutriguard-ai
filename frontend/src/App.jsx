@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Lenis from 'lenis';
 import { HealthProfileForm } from './components/HealthProfileForm';
 import { BarcodeScanner } from './components/BarcodeScanner';
 import { ScoreDisplay } from './components/ScoreDisplay';
@@ -10,13 +11,33 @@ import { Stats } from './components/Stats';
 import { FeaturesGrid } from './components/FeaturesGrid';
 import { Science } from './components/Science';
 import { Footer } from './components/Footer';
-import { Check, AlertTriangle, Activity, Zap } from 'lucide-react';
+import { Check, AlertTriangle, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function App() {
   const [isAppActive, setIsAppActive] = useState(false);
   const [appView, setAppView] = useState('scanner'); // 'scanner' or 'profile'
   const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      touchMultiplier: 2,
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
 
   // Scan State
   const [scanState, setScanState] = useState('scanner'); // scanner, result
@@ -133,102 +154,69 @@ function App() {
                 {appView === 'profile' ? (
                   <motion.section
                     key="profile-view"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    id="profile"
-                    className="py-12 md:py-24 bg-[#0B0F14]"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.05 }}
+                    className="h-[calc(100vh-80px)] w-full flex flex-col items-center justify-center p-4 overflow-hidden"
                   >
-                    <div className="max-w-7xl mx-auto px-6">
-                      <div className="text-center mb-12">
-                        <motion.h2 className="text-4xl md:text-6xl font-heading font-bold mb-6 text-white">
-                          Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-secondary to-blue-400">Health Identity</span>
-                        </motion.h2>
-                        <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-                          Personalize your AI engine by configuring your health profile, allergies, and nutritional goals.
-                        </p>
-                      </div>
-
-                      <div className="glass-card rounded-3xl p-6 md:p-12 shadow-2xl max-w-2xl mx-auto bg-black/40 backdrop-blur-2xl border border-white/10 relative">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-secondary/5 rounded-full blur-[80px] pointer-events-none"></div>
-                        <div className="relative z-10">
+                    <div className="w-full max-w-md h-full flex flex-col justify-center">
+                      <div className="glass-card rounded-[2.5rem] p-4 md:p-8 flex flex-col backdrop-blur-3xl border border-white/10 relative overflow-hidden shadow-2xl">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-full blur-[40px] pointer-events-none"></div>
+                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-primary/10 rounded-full blur-[40px] pointer-events-none"></div>
+                        <div className="relative z-10 w-full">
                           <HealthProfileForm onComplete={handleProfileComplete} />
                         </div>
-                      </div>
-
-                      <div className="mt-12 text-center">
-                        <button
-                          onClick={() => setAppView('scanner')}
-                          className="text-gray-500 hover:text-white transition-colors text-sm font-bold flex items-center gap-2 mx-auto"
-                        >
-                          Cancel and return to scanner
-                        </button>
                       </div>
                     </div>
                   </motion.section>
                 ) : (
                   <motion.section
                     key="scanner-view"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                    id="scan"
-                    className="py-12 md:py-24 bg-black min-h-[85vh] flex items-center"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.05 }}
+                    className="h-[calc(100vh-80px)] w-full flex flex-col items-center justify-center p-4 overflow-hidden"
                   >
-                    <div className="max-w-7xl mx-auto px-6 w-full relative z-10 flex flex-col items-center">
-                      <div className="text-center mb-12">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md mb-6">
-                          <Zap className="w-4 h-4 text-primary" />
-                          <span className="text-xs text-primary font-bold tracking-wide uppercase">AI Processing Hub</span>
-                        </div>
-                        <h2 className="text-4xl md:text-6xl font-heading font-bold mb-6 text-white text-glow">Live AI Engine</h2>
-                        <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto">
-                          Scan any product barcode for instantaneous clinical nutritional analysis.
-                        </p>
-                      </div>
+                    <div className="w-full max-w-md flex flex-col items-center justify-center h-full">
+                      {scanState === 'scanner' ? (
+                        <motion.div
+                          key="scanner-ui"
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="w-full glass-card p-4 sm:p-8 rounded-[2.5rem] border border-white/10 relative overflow-hidden shadow-2xl"
+                        >
+                          <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-secondary/5 pointer-events-none"></div>
 
-                      <div className="flex flex-col items-center justify-center w-full">
-                        {scanState === 'scanner' ? (
-                          <motion.div
-                            key="scanner-ui"
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="w-full max-w-md glass-card p-6 sm:p-8 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] border border-white/5 relative bg-gradient-to-b from-[#111821] to-[#0B0F14]"
-                          >
-                            <div className="absolute inset-0 border border-primary/10 rounded-3xl animate-pulse-slow pointer-events-none"></div>
-
-                            {profile ? (
-                              <div className="mb-6 flex items-center justify-center gap-2 bg-primary/10 py-3 px-5 rounded-xl border border-primary/20">
-                                <Check className="w-4 h-4 text-primary" />
-                                <span className="text-xs text-primary font-bold uppercase tracking-widest">Personalized Mode Active</span>
+                          {profile ? (
+                            <div className="mb-4 flex items-center justify-center gap-2 bg-primary/10 py-2 px-4 rounded-xl border border-primary/20">
+                              <Check className="w-3.5 h-3.5 text-primary" />
+                              <span className="text-[10px] text-primary font-black uppercase tracking-widest leading-none">Personalized mode active</span>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={() => setAppView('profile')}
+                              className="w-full mb-4 flex flex-col items-center justify-center gap-1.5 bg-yellow-400/5 py-2 px-4 rounded-xl border border-yellow-400/10 hover:bg-yellow-400/10 transition-all group"
+                            >
+                              <div className="flex items-center gap-2">
+                                <AlertTriangle className="w-3 h-3 text-yellow-500" />
+                                <span className="text-[10px] text-yellow-500 font-black uppercase tracking-widest leading-none">Baseline mode • Tap to personalize</span>
                               </div>
-                            ) : (
-                              <button
-                                onClick={() => setAppView('profile')}
-                                className="w-full mb-6 flex flex-col items-center justify-center gap-2 bg-yellow-400/5 py-4 px-5 rounded-xl border border-yellow-400/10 hover:bg-yellow-400/10 transition-all group"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <AlertTriangle className="w-4 h-4 text-yellow-500" />
-                                  <span className="text-sm text-yellow-500 font-bold tracking-tight">Standard Baseline Mode</span>
-                                </div>
-                                <span className="text-[10px] text-yellow-500/60 font-medium uppercase tracking-wider">Click to set health profile for personalized score</span>
-                              </button>
-                            )}
+                            </button>
+                          )}
 
-                            <BarcodeScanner onScan={handleScan} loading={scanLoading} />
-                            {scanError && <p className="text-red-400 text-center mt-6 text-sm bg-red-500/5 p-4 rounded-xl font-medium border border-red-500/10">{scanError}</p>}
-                          </motion.div>
-                        ) : (
-                          <motion.div
-                            key="result-ui"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="w-full max-w-lg"
-                          >
-                            <ScoreDisplay result={scanResult} onReset={resetScan} />
-                          </motion.div>
-                        )}
-                      </div>
+                          <BarcodeScanner onScan={handleScan} loading={scanLoading} />
+                          {scanError && <p className="text-red-400 text-center mt-3 text-xs bg-red-500/5 p-2 rounded-lg border border-red-500/10">{scanError}</p>}
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="result-ui"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="w-full h-full max-h-full overflow-y-auto custom-scrollbar"
+                        >
+                          <ScoreDisplay result={scanResult} onReset={resetScan} />
+                        </motion.div>
+                      )}
                     </div>
                   </motion.section>
                 )}
@@ -238,9 +226,11 @@ function App() {
         </AnimatePresence>
       </main>
 
-      <div id="footer">
-        <Footer />
-      </div>
+      {!isAppActive && (
+        <div id="footer">
+          <Footer />
+        </div>
+      )}
     </div>
   );
 }

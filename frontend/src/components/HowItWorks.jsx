@@ -40,7 +40,7 @@ export function HowItWorks() {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx * 0.1 }}
-                            className="bg-[#0D1117] border border-white/5 p-8 md:p-10 rounded-[2.5rem] flex items-start gap-8 group hover:border-primary/20 transition-all"
+                            className="glass-card glass-card-hover p-8 md:p-10 rounded-[2.5rem] flex items-start gap-8 group"
                         >
                             <div className="w-20 h-20 bg-[#16211C] rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
                                 <step.icon className="w-10 h-10 text-primary group-hover:text-black transition-colors" />
