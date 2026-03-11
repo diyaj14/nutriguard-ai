@@ -11,13 +11,22 @@ import { Stats } from './components/Stats';
 import { FeaturesGrid } from './components/FeaturesGrid';
 import { Science } from './components/Science';
 import { Footer } from './components/Footer';
-import { Check, AlertTriangle, Zap } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Dashboard } from './components/Dashboard';
+import { motion, AnimatePresence, useScroll } from 'framer-motion';
+import { AuthForm } from './components/AuthForm';
+import { BusinessPlan } from './components/BusinessPlan';
+import { LogIn, UserCircle, Check, AlertTriangle } from 'lucide-react';
+import { Canvas } from '@react-three/fiber';
+import { Suspense } from 'react';
+import { NeuralFoodScene } from './components/NeuralFoodScene';
 
 function App() {
+  const { scrollYProgress } = useScroll();
   const [isAppActive, setIsAppActive] = useState(false);
-  const [appView, setAppView] = useState('scanner'); // 'scanner' or 'profile'
+  const [appView, setAppView] = useState('scanner'); // 'scanner', 'profile', or 'dashboard'
   const [profile, setProfile] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -108,13 +117,37 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-background text-white font-sans selection:bg-primary/30">
+    <div className="min-h-screen w-full bg-background text-white font-sans selection:bg-primary/30 relative">
+      {/* GLOBAL 3D SCENE BACKGROUND */}
+      {!isAppActive && (
+        <div className="fixed inset-0 z-0 pointer-events-none">
+          <Canvas shadows dpr={[1, 2]}>
+            <Suspense fallback={null}>
+              <NeuralFoodScene scrollProgress={scrollYProgress} />
+            </Suspense>
+          </Canvas>
+        </div>
+      )}
+
       <Navbar
         onGoHome={() => { setIsAppActive(false); window.scrollTo(0, 0); }}
         isAppActive={isAppActive}
-        onToggleProfile={() => setAppView(prev => prev === 'scanner' ? 'profile' : 'scanner')}
+        onSetView={setAppView}
         currentView={appView}
         hasProfile={!!profile}
+        currentUser={currentUser}
+        onLoginClick={() => setIsAuthOpen(true)}
+        onLogout={() => setCurrentUser(null)}
+      />
+
+      <AuthForm
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        onLogin={(user) => {
+          setCurrentUser(user);
+          setIsAppActive(true);
+          setAppView('dashboard');
+        }}
       />
 
       <main>
@@ -143,6 +176,11 @@ function App() {
               {/* FEATURES SECTION */}
               <FeaturesGrid />
 
+              {/* BUSINESS PLAN SECTION */}
+              <div id="plans">
+                <BusinessPlan />
+              </div>
+
               {/* SCIENCE SECTION */}
               <div id="science">
                 <Science />
@@ -154,9 +192,9 @@ function App() {
                 {appView === 'profile' ? (
                   <motion.section
                     key="profile-view"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 1.05 }}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
                     className="h-[calc(100vh-80px)] w-full flex flex-col items-center justify-center p-4 overflow-hidden"
                   >
                     <div className="w-full max-w-md h-full flex flex-col justify-center">
@@ -169,12 +207,22 @@ function App() {
                       </div>
                     </div>
                   </motion.section>
+                ) : appView === 'dashboard' ? (
+                  <motion.section
+                    key="dashboard-view"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="h-[calc(100vh-80px)] w-full overflow-y-auto p-4 custom-scrollbar pt-8"
+                  >
+                    <Dashboard />
+                  </motion.section>
                 ) : (
                   <motion.section
                     key="scanner-view"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 1.05 }}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
                     className="h-[calc(100vh-80px)] w-full flex flex-col items-center justify-center p-4 overflow-hidden"
                   >
                     <div className="w-full max-w-md flex flex-col items-center justify-center h-full">

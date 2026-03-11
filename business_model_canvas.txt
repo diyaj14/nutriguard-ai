@@ -1,0 +1,86 @@
+BUSINESS MODEL CANVAS: NUTRIGUARD AI
+====================================
+
+1. KEY PARTNERS
+---------------
+• FSSAI / Health Regulators: For data compliance and credibility.
+• Healthy Food Brands: Potential affiliate partners for the "Better Alternatives" engine.
+• Health Insurers: For preventative care data.
+• OpenFoodFacts: Primary data source.
+
+2. KEY ACTIVITIES
+-----------------
+• AI/ML Development: Continual training of the Personalization Engine.
+• Database Curation: Maintaining the Indian food database.
+• UX Design: Keeping the glassmorphism/biotech aesthetic premium.
+
+3. VALUE PROPOSITIONS
+----------------------
+• Hyper-Personalization: Scoring food based on your specific medical conditions (Diabetes, Hypertension).
+• AHA Results: Not just "bad food" alerts, but "Smart Alternatives."
+• Risk Prevention: Live tracking of sodium/sugar trends.
+
+4. CUSTOMER RELATIONSHIPS
+-------------------------
+• Self-Service: Automation via AI bot.
+• Health Community: User-contributed data and reviews.
+• Subscription Model: Premium features via SaaS.
+
+5. CUSTOMER SEGMENTS
+--------------------
+• Health Conscious: Fitness enthusiasts and dieters.
+• Chronic Patients: People managing Diabetes/Blood Pressure.
+• Busy Parents: Families with children's allergies to manage.
+
+6. KEY RESOURCES
+----------------
+• Proprietary ML Models: The gradient boosting suitability engine.
+• User Health Data: Secured anonymized health profiles.
+• Tech Stack: FastAPI backend, React frontend, AI/ML pipeline.
+
+7. CHANNELS
+-----------
+• Mobile Web App: Primary access point.
+• Health Blogs/Magazines: Influencer partnerships.
+• App Stores: Future native distribution.
+
+8. COST STRUCTURE
+-----------------
+• Cloud Infrastructure: Hosting (Vite, Render, Database).
+• AI API Costs: Gemini/Groq for conversational analysis.
+• Marketing: User acquisition and SEO.
+
+9. REVENUE STREAMS
+------------------
+• Freemium SaaS: Basic scanning free; "Family Mode" & "History Analytics" via monthly subscription ($5-10/mo).
+• Brand Partnerships: "Top Choice" placements for healthy brands in suggestions.
+• Aggregated Health Reports: Paid annual reports for clinicians.
+
+
+STRATEGIC BUSINESS PILLARS
+==========================
+
+1. The "Safety First" Competitive Moat
+--------------------------------------
+Most apps (MyFitnessPal, etc.) focus on calories. NutriGuard focus on safety and suitability. By flagging MSG, allergens, and salt-ratios for hypertensive patients, we create a specialized tool that users depend on for their health, not just their weight.
+
+2. The Recommendation Flywheel
+------------------------------
+The "Better Alternative" Suggestion Engine is the engine of growth.
+- User scans a 3/10 score biscuit.
+- App suggests a 9/10 score millet cookie.
+- The millet cookie brand pays a small affiliate commission or "sponsored placement" fee.
+- This provides value to the user while generating non-intrusive revenue.
+
+3. Data-as-a-Service (Preventative Care)
+----------------------------------------
+Anonymized trend data on what people are scanning can be incredibly valuable for public health researchers and food manufacturers looking to develop healthier products for specific demographics (e.g., "What are diabetic users in Mumbai scanning most?").
+
+4. Expansion into B2B
+---------------------
+NutriGuard for Hospitals/Clinics: Doctors can "prescribe" NutriGuard to their patients to monitor their adherence to a prescribed diet, using the History + Trend Dashboard as the reporting interface.
+
+
+NEXT STEPS FOR PITCHING
+=======================
+Focus on the Family Mode. Investors love "sticky" products where the churn is low because the whole household is integrated into the platform.

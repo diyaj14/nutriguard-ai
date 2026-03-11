@@ -1,0 +1,27 @@
+1. "Better Alternative" Suggestion Engine
+When a product scores low, don't just say "bad for you" — show 2-3 better alternatives 
+from your database ranked by the user's profile. This is the AHA moment judges love.
+ Example: "This biscuit scores 3/10 for your diabetes profile. Here are 3 better snacks at
+  this price range."
+
+3. "Ingredient Deep Dive" with Red Flag Alerts
+Beyond macros, flag specific harmful additives — things like high-fructose 
+corn syrup, MSG, artificial sweeteners, trans fats, carrageenan. Show a simple 
+traffic light per ingredient. This adds depth judges notice and users genuinely find useful.
+
+4. Family Mode / Multi-Profile
+Let one user set up profiles for their whole family — diabetic dad, 
+peanut-allergic kid, fitness-focused mom. When scanning a product, show all family members'
+scores at once with a "Safe for everyone?" summary.
+ This is a strong social impact narrative and very demo-friendly.
+
+ 5. Scan History + Trend Dashboard
+Show the user a weekly nutrition summary based on everything they've scanned — average 
+sodium intake, sugar trend, protein hit rate vs. goal. This transforms a
+ one-time tool into a habit-forming app, which judges love for feasibility/scalability scores.
+
+ 6. Regional Language Support + Indian Food Database
+Most nutrition apps are built for Western foods. If this is targeting Indian 
+markets (FSSAI is in your reference guide), adding support for regional 
+language labels (Hindi, Tamil, etc.) and Indian packaged foods is a massive differentiator.
+ Even showing the attempt scores huge on innovation and social impact.

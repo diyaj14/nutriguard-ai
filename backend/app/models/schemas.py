@@ -48,8 +48,25 @@ class UserProfile(BaseModel):
     age: Optional[int] = None
     daily_calorie_target: Optional[int] = None
 
+class AlternativeProduct(BaseModel):
+    """Simplified product info for recommendations"""
+    name: str
+    product_id: str
+    suitability_score: float
+    improvement_score: float  # How much better it is than current product
+    image_url: Optional[str] = None
+
+class AdditiveDetail(BaseModel):
+    """Detailed info about a food additive"""
+    id: str
+    name: str
+    risk: str # 'low', 'moderate', 'high'
+    description: str
+
 class PersonalizedProductResponse(ProductResponse):
-    """Product response with personalized suitability score"""
+    """Product response with personalized suitability score and recommendations"""
     suitability_score: float  # 0-100
     reasons: List[str]  # Explanation for the score
     warnings: List[str] = []  # Critical warnings (e.g., allergen alerts)
+    recommendations: List[AlternativeProduct] = []
+    additive_details: List[AdditiveDetail] = []

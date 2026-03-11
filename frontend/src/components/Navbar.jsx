@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Activity, Menu, X, ArrowRight, Scan, User, Shield, BarChart2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export function Navbar({ onGoHome, isAppActive, onToggleProfile, currentView, hasProfile }) {
+export function Navbar({ onGoHome, isAppActive, onSetView, currentView, hasProfile, currentUser, onLoginClick, onLogout }) {
     const [isScrolled, setIsScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -18,8 +18,8 @@ export function Navbar({ onGoHome, isAppActive, onToggleProfile, currentView, ha
         { name: 'Home', href: '#home', onClick: (e) => { e.preventDefault(); onGoHome(); setMobileMenuOpen(false); } },
         { name: 'How It Works', href: '#how-it-works', onClick: () => { setMobileMenuOpen(false); setTimeout(() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }), 100); } },
         { name: 'Features', href: '#features', onClick: () => { setMobileMenuOpen(false); setTimeout(() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }), 100); } },
+        { name: 'Plans', href: '#plans', onClick: () => { setMobileMenuOpen(false); setTimeout(() => document.getElementById('plans')?.scrollIntoView({ behavior: 'smooth' }), 100); } },
         { name: 'Science', href: '#science', onClick: () => { setMobileMenuOpen(false); setTimeout(() => document.getElementById('science')?.scrollIntoView({ behavior: 'smooth' }), 100); } },
-        { name: 'Contact', href: '#footer', onClick: () => { setMobileMenuOpen(false); setTimeout(() => document.getElementById('footer')?.scrollIntoView({ behavior: 'smooth' }), 100); } },
     ];
 
     return (
@@ -60,22 +60,56 @@ export function Navbar({ onGoHome, isAppActive, onToggleProfile, currentView, ha
 
                         <div className="flex items-center gap-3 md:gap-4">
                             {isAppActive && (
-                                <button
-                                    onClick={onToggleProfile}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${currentView === 'profile' ? 'bg-primary border-primary text-black' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'}`}
-                                >
-                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center ${hasProfile ? 'bg-emerald-500/20' : 'bg-white/10'}`}>
-                                        <User className={`w-3.5 h-3.5 ${hasProfile ? 'text-emerald-400' : 'text-gray-400'}`} />
-                                    </div>
-                                    <span className="text-xs font-bold hidden xs:block">{currentView === 'profile' ? 'View App' : 'My Profile'}</span>
-                                </button>
+                                <div className="flex items-center gap-1 sm:gap-2 bg-white/5 p-1 rounded-full border border-white/10">
+                                    <button
+                                        onClick={() => onSetView('scanner')}
+                                        className={`p-2 rounded-full transition-all ${currentView === 'scanner' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-white'}`}
+                                        title="Scanner"
+                                    >
+                                        <Scan className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        onClick={() => onSetView('dashboard')}
+                                        className={`p-2 rounded-full transition-all ${currentView === 'dashboard' ? 'bg-secondary text-white shadow-lg shadow-secondary/20' : 'text-gray-400 hover:text-white'}`}
+                                        title="Dashboard"
+                                    >
+                                        <BarChart2 className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        onClick={() => onSetView('profile')}
+                                        className={`p-2 rounded-full transition-all ${currentView === 'profile' ? 'bg-white text-black shadow-lg shadow-white/10' : 'text-gray-400 hover:text-white'}`}
+                                        title="Profile"
+                                    >
+                                        <User className="w-4 h-4" />
+                                    </button>
+                                </div>
                             )}
 
                             {!isAppActive && !mobileMenuOpen && (
-                                <div className="hidden sm:flex">
+                                <div className="hidden sm:flex items-center gap-4">
+                                    {currentUser ? (
+                                        <div className="flex items-center gap-4">
+                                            <span className="text-sm font-bold text-white/70">
+                                                Hello, <span className="text-primary">{currentUser.fullName}</span>
+                                            </span>
+                                            <button
+                                                onClick={onLogout}
+                                                className="text-[10px] font-black uppercase tracking-widest text-white/30 hover:text-red-500 transition-colors bg-white/5 px-3 py-1.5 rounded-lg border border-white/10"
+                                            >
+                                                Log Out
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <button
+                                            onClick={onLoginClick}
+                                            className="text-sm font-bold text-white/70 hover:text-white transition-all px-4"
+                                        >
+                                            Log In
+                                        </button>
+                                    )}
                                     <button
-                                        onClick={() => { onGoHome(); setTimeout(() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }), 100); }}
-                                        className="px-8 py-3 bg-white text-black font-bold rounded-full text-sm hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all flex items-center gap-2 hover:-translate-y-0.5 active:scale-95 border-2 border-white"
+                                        onClick={() => { onGoHome(); setTimeout(() => document.getElementById('plans')?.scrollIntoView({ behavior: 'smooth' }), 100); }}
+                                        className="px-8 py-3 bg-primary text-black font-bold rounded-full text-sm hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] transition-all flex items-center gap-2 hover:-translate-y-0.5 active:scale-95 shadow-xl shadow-primary/10"
                                     >
                                         Try Sandbox
                                         <ArrowRight className="w-4 h-4" />
@@ -159,9 +193,25 @@ export function Navbar({ onGoHome, isAppActive, onToggleProfile, currentView, ha
                                         </div>
                                     ))}
                                 </div>
+                                <div className="flex items-center gap-4">
+                                    {currentUser ? (
+                                        <div className="flex flex-col">
+                                            <span className="text-xs font-bold text-white/50 uppercase tracking-widest mb-1">Account</span>
+                                            <span className="text-xl font-bold text-primary">{currentUser.fullName}</span>
+                                            <button onClick={onLogout} className="text-xs text-red-500 font-bold mt-2 text-left">Log Out</button>
+                                        </div>
+                                    ) : (
+                                        <button
+                                            onClick={() => { setMobileMenuOpen(false); onLoginClick(); }}
+                                            className="text-xl font-bold text-white hover:text-primary transition-colors"
+                                        >
+                                            Log In
+                                        </button>
+                                    )}
+                                </div>
                                 <button
-                                    onClick={() => { setMobileMenuOpen(false); onGoHome(); }}
-                                    className="w-full xs:w-auto px-8 py-4 bg-primary text-black font-extrabold rounded-full text-base flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(var(--primary-rgb),0.3)] hover:scale-105 active:scale-95 transition-all"
+                                    onClick={() => { setMobileMenuOpen(false); onGoHome(); setTimeout(() => document.getElementById('plans')?.scrollIntoView({ behavior: 'smooth' }), 100); }}
+                                    className="w-full xs:w-auto px-8 py-4 bg-primary text-black font-extrabold rounded-full text-base flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:scale-105 active:scale-95 transition-all"
                                 >
                                     Get Started
                                     <ArrowRight className="w-5 h-5" />

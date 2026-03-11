@@ -7,11 +7,13 @@ export default {
     theme: {
         extend: {
             colors: {
-                background: '#0B0F14',
-                primary: '#16E0A0',
-                secondary: '#00C2FF',
+                background: '#050505',
+                primary: '#10B981', // Emerald 500
+                secondary: '#34D399', // Emerald 400
+                accent: '#059669', // Emerald 600
                 warning: '#F6B73C',
                 danger: '#FF4D4D',
+                card: 'rgba(15, 15, 15, 0.6)',
             },
             fontFamily: {
                 sans: ['Inter', 'sans-serif'],

@@ -1,67 +1,83 @@
 import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
-import { motion } from 'framer-motion';
+import { OrbitControls, PerspectiveCamera, Float } from '@react-three/drei';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { NeuralFood } from './NeuralFood';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, ShieldCheck, Zap } from 'lucide-react';
 
 export function Hero({ onStart, onLearnMore }) {
-    return (
-        <section className="relative min-h-[100svh] flex flex-col justify-center items-center overflow-hidden bg-black pt-24 md:pt-0">
+    const { scrollY } = useScroll();
+    const y1 = useTransform(scrollY, [0, 500], [0, 200]);
+    const opacity = useTransform(scrollY, [0, 300], [1, 0]);
+    const scale = useTransform(scrollY, [0, 500], [1, 0.8]);
 
-            {/* Background Image with Effects */}
-            <div className="absolute inset-0 z-0">
-                <img
-                    src="/hero-bg.png"
-                    alt="Hero Background"
-                    className="w-full h-full object-cover opacity-60 scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-black via-black/40 to-black z-0"></div>
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(22,224,160,0.15)_0%,transparent_70%)] z-0"></div>
+    return (
+        <section className="relative min-h-[100svh] flex flex-col justify-center items-center overflow-hidden bg-transparent pt-24 md:pt-0">
+
+            {/* Cinematic Background Elements (Overlays) */}
+            <div className="absolute inset-0 z-0 pointer-events-none">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(22,224,160,0.05)_0%,transparent_60%)]"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black"></div>
             </div>
 
-            {/* Text Content */}
-            <div className="relative z-10 text-center px-6 w-full max-w-5xl mx-auto mt-20 md:mt-0 flex flex-col items-center">
+            {/* Content Overlay */}
+            <div className="relative z-20 text-center px-6 w-full max-w-7xl mx-auto flex flex-col items-center">
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
+                    style={{ y: y1, opacity, scale }}
                     className="flex flex-col items-center"
                 >
-                    <a href="#scan" className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl mb-8 shadow-2xl hover:bg-white/10 transition-colors cursor-pointer animate-fade-in-up">
-                        <Sparkles className="w-4 h-4 text-primary" />
-                        <span className="text-sm text-gray-200 font-bold tracking-wide">Next-Gen AI Nutrition Scanner</span>
-                        <ArrowRight className="w-3 h-3 text-gray-400 ml-1" />
-                    </a>
-
-                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold mb-6 leading-[1.1] font-heading tracking-tight drop-shadow-2xl">
-                        <span className="block text-white mb-2">Eat Smarter.</span>
-                        <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary via-emerald-400 to-secondary animate-pulse-slow">
-                            Live Better.
-                        </span>
-                    </h1>
-
-                    <p className="text-lg md:text-2xl text-gray-300 mb-12 font-medium leading-relaxed max-w-2xl mx-auto drop-shadow-lg">
-                        Scan any food barcode. Get instant, personalized health scores powered by <span className="text-primary font-bold">clinical intelligence</span> and your unique DNA profile.
-                    </p>
-
                     <motion.div
-                        className="w-full flex flex-col sm:flex-row justify-center gap-4 sm:gap-6"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.4, duration: 0.6 }}
+                        transition={{ duration: 0.6 }}
+                        className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-2xl mb-12 shadow-2xl"
                     >
+                        <Sparkles className="w-5 h-5 text-primary animate-pulse" />
+                        <span className="text-sm text-emerald-100 font-bold uppercase tracking-[0.2em]">Next-Gen Health Intelligence</span>
+                    </motion.div>
+
+                    <h1 className="text-6xl md:text-8xl lg:text-9xl font-black mb-8 leading-[0.95] tracking-tighter text-white">
+                        EAT <span className="text-transparent bg-clip-text bg-gradient-to-br from-primary via-emerald-400 to-cyan-400">SMARTER</span>.<br />
+                        LIVE <span className="text-white">BETTER</span>.
+                    </h1>
+
+                    <p className="text-lg md:text-2xl text-gray-400 mb-16 font-medium leading-relaxed max-w-3xl mx-auto">
+                        Your DNA is unique. Your diet should be too. <span className="text-white">NutriGuard AI</span> decodes clinical data to guide every bite you take.
+                    </p>
+
+                    <div className="flex flex-col sm:flex-row gap-6 w-full sm:w-auto">
                         <button
                             onClick={onStart}
-                            className="px-8 py-5 bg-gradient-to-r from-primary to-emerald-400 text-black font-extrabold rounded-full shadow-[0_0_40px_rgba(22,224,160,0.4)] hover:shadow-[0_0_60px_rgba(22,224,160,0.6)] hover:-translate-y-1 active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 text-lg md:w-auto w-full group"
+                            className="group relative px-10 py-6 bg-primary text-black font-black rounded-2xl overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_50px_rgba(22,224,160,0.3)]"
                         >
-                            Try Demo Sandbox
-                            <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                            <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                            <span className="relative flex items-center justify-center gap-3 text-xl">
+                                BEGIN ASSESSMENT
+                                <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                            </span>
                         </button>
-                    </motion.div>
+                    </div>
                 </motion.div>
             </div>
+
+            {/* Scroll Indicator */}
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1 }}
+                className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4"
+            >
+                <span className="text-[10px] font-black tracking-[0.4em] text-white/30 uppercase"></span>
+                <div className="w-[2px] h-12 bg-gradient-to-b from-primary/50 to-transparent rounded-full overflow-hidden">
+                    <motion.div
+                        animate={{ y: [0, 48, 0] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                        className="w-full h-1/4 bg-primary"
+                    />
+                </div>
+            </motion.div>
 
         </section>
     );
 }
+

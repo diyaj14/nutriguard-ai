@@ -10,7 +10,7 @@ const stats = [
 
 export function Stats() {
     return (
-        <section className="py-24 bg-black relative overflow-hidden">
+        <section className="py-24 bg-transparent relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-6 relative z-10">
                 <div className="text-center mb-20">
                     <motion.span
@@ -30,17 +30,17 @@ export function Stats() {
                     </motion.h2>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="flex overflow-x-auto pb-8 gap-6 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-8 snap-x snap-mandatory scroll-smooth no-scrollbar">
                     {stats.map((stat, idx) => (
                         <motion.div
                             key={idx}
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
+                            initial={{ opacity: 0, y: 10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx * 0.1 }}
-                            className="glass-card hover:bg-white/5 transition-all p-10 rounded-[2.5rem] flex flex-col items-center justify-center text-center group relative overflow-hidden"
+                            className="glass-card hover:bg-white/5 transition-all p-10 rounded-[2.5rem] flex flex-col items-center justify-center text-center group relative overflow-hidden w-[300px] shrink-0 snap-center"
                         >
                             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                            <div className="text-4xl xs:text-5xl sm:text-7xl font-black text-primary mb-6 tracking-tighter drop-shadow-[0_0_15px_rgba(22,224,160,0.4)] group-hover:scale-110 transition-transform duration-500">
+                            <div className="text-4xl xs:text-5xl sm:text-7xl font-black text-primary mb-6 tracking-tighter drop-shadow-[0_0_15px_rgba(16,185,129,0.3)] duration-500">
                                 {stat.value}
                             </div>
                             <div className="text-xl font-black text-white mb-2 tracking-tight group-hover:text-primary transition-colors">

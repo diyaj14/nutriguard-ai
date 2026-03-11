@@ -8,6 +8,7 @@ from .resolvers.barcode_resolver import resolve_by_barcode
 from .resolvers.image_resolver import resolve_by_image
 from .models.schemas import ProductResponse, UserProfile, PersonalizedProductResponse
 from .utils.personalization import get_personalization_engine
+from .utils.history import save_scan, get_history
 
 # Load environment variables
 from dotenv import load_dotenv
@@ -86,12 +87,24 @@ def scan_barcode_personalized_endpoint(request: PersonalizedBarcodeRequest):
         user_profile=request.user_profile.dict()
     )
     
+    # Get recommendations
+    recommendations = engine.get_recommendations(
+        current_product_data=product_dict,
+        current_score=score,
+        user_profile=request.user_profile.dict()
+    )
+    
+    # Get additive details
+    additive_details = engine.get_additive_details(product.additives)
+    
     # Create personalized response
     return PersonalizedProductResponse(
         **product.dict(),
         suitability_score=score,
         reasons=reasons,
-        warnings=warnings
+        warnings=warnings,
+        recommendations=recommendations,
+        additive_details=additive_details
     )
 
 @app.post("/scan/image/personalized", response_model=PersonalizedProductResponse)
@@ -135,13 +148,30 @@ async def scan_image_personalized_endpoint(
         user_profile=user_profile_obj.dict()
     )
     
+    # Get recommendations
+    recommendations = engine.get_recommendations(
+        current_product_data=product_dict,
+        current_score=score,
+        user_profile=user_profile_obj.dict()
+    )
+    
+    # Get additive details
+    additive_details = engine.get_additive_details(product.additives)
+    
     # Create personalized response
     return PersonalizedProductResponse(
         **product.dict(),
         suitability_score=score,
         reasons=reasons,
-        warnings=warnings
+        warnings=warnings,
+        recommendations=recommendations,
+        additive_details=additive_details
     )
+
+@app.get("/history")
+def get_user_history():
+    """Get scan history for the user."""
+    return get_history()
 
 if __name__ == "__main__":
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)

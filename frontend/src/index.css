@@ -39,10 +39,12 @@
   }
 
   .glass-card-hover:hover {
-    background: rgba(22, 224, 160, 0.05);
-    border: 1px solid rgba(22, 224, 160, 0.2);
-    box-shadow: 0 0 40px rgba(22, 224, 160, 0.15);
-    transform: translateY(-4px) scale(1.01);
+    background: rgba(16, 185, 129, 0.05);
+    /* Emerald 500 */
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    box-shadow: 0 0 40px rgba(16, 185, 129, 0.1);
+    transform: translateY(-4px);
+    /* Removed scale */
   }
 
   .glass-navbar {
@@ -53,7 +55,7 @@
   }
 
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-br from-white via-primary to-secondary font-extrabold;
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-white via-primary to-emerald-400 font-extrabold;
   }
 
   .text-glow {
@@ -62,6 +64,15 @@
 
   .neon-glow {
     box-shadow: 0 0 15px rgba(22, 224, 160, 0.4), 0 0 30px rgba(22, 224, 160, 0.2);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 

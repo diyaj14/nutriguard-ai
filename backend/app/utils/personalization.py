@@ -259,6 +259,97 @@ class PersonalizationEngine:
         
         return reasons, warnings
 
+    def get_recommendations(self, current_product_data: dict, current_score: float, user_profile: dict) -> List[dict]:
+        """
+        Find healthier alternatives to the current product.
+        In a production app, this would query the database/API.
+        For this demo, we use a curated list of 'known healthy' alternatives.
+        """
+        # Curated healthy alternatives by category
+        HEALTHY_LIBRARY = {
+            'Snack': [
+                {'name': 'Roasted Makhanas (Fox Nuts)', 'product_id': 'makhana01', 'energy_kcal_100g': 350, 'sugars_100g': 0.5, 'salt_100g': 0.2, 'proteins_100g': 9.0, 'fat_100g': 0.1, 'saturated_fat_100g': 0, 'nova_group': 1, 'image_url': 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&q=80&w=200'},
+                {'name': 'Mixed Roasted Nuts', 'product_id': 'nuts02', 'energy_kcal_100g': 600, 'sugars_100g': 4.0, 'salt_100g': 0.1, 'proteins_100g': 20.0, 'fat_100g': 50.0, 'saturated_fat_100g': 7, 'nova_group': 2, 'image_url': 'https://images.unsplash.com/photo-1596591606975-97ee5cef3a1e?auto=format&fit=crop&q=80&w=200'},
+                {'name': 'Fruit & Nut Energy Bar (No Sugar)', 'product_id': 'bar03', 'energy_kcal_100g': 380, 'sugars_100g': 12.0, 'salt_100g': 0.05, 'proteins_100g': 8.0, 'fat_100g': 15.0, 'saturated_fat_100g': 2, 'nova_group': 3, 'image_url': 'https://images.unsplash.com/photo-1590301157890-4810ed352733?auto=format&fit=crop&q=80&w=200'}
+            ],
+            'Beverage': [
+                {'name': 'Unsweetened Green Tea', 'product_id': 'tea01', 'energy_kcal_100g': 2, 'sugars_100g': 0, 'salt_100g': 0, 'proteins_100g': 0, 'fat_100g': 0, 'saturated_fat_100g': 0, 'nova_group': 1, 'image_url': 'https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?auto=format&fit=crop&q=80&w=200'},
+                {'name': 'Sparkling Water with Lemon', 'product_id': 'water02', 'energy_kcal_100g': 0, 'sugars_100g': 0, 'salt_100g': 0, 'proteins_100g': 0, 'fat_100g': 0, 'saturated_fat_100g': 0, 'nova_group': 1, 'image_url': 'https://images.unsplash.com/photo-1551028150-64b9f398f678?auto=format&fit=crop&q=80&w=200'},
+                {'name': 'Fresh Coconut Water', 'product_id': 'coconut03', 'energy_kcal_100g': 19, 'sugars_100g': 3.7, 'salt_100g': 0.1, 'proteins_100g': 0.7, 'fat_100g': 0.2, 'saturated_fat_100g': 0, 'nova_group': 1, 'image_url': 'https://images.unsplash.com/photo-1523675322749-163414005489?auto=format&fit=crop&q=80&w=200'}
+            ],
+            'Dairy': [
+                {'name': 'Greek Style Low Fat Yogurt', 'product_id': 'yogurt01', 'energy_kcal_100g': 59, 'sugars_100g': 3.2, 'salt_100g': 0.1, 'proteins_100g': 10.0, 'fat_100g': 2.0, 'saturated_fat_100g': 1.2, 'nova_group': 3, 'image_url': 'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&q=80&w=200'},
+                {'name': 'Unsweetened Almond Milk', 'product_id': 'almond02', 'energy_kcal_100g': 13, 'sugars_100g': 0.1, 'salt_100g': 0.1, 'proteins_100g': 0.5, 'fat_100g': 1.1, 'saturated_fat_100g': 0.1, 'nova_group': 3, 'image_url': 'https://images.unsplash.com/photo-1550583724-125581fd2ffb?auto=format&fit=crop&q=80&w=200'}
+            ]
+        }
+        
+        # Get category of current product
+        current_features = self._map_product_to_features(current_product_data)
+        category = current_features.get('category', 'Snack')
+        
+        # Get candidates for this category (fallback to Snack)
+        candidates = HEALTHY_LIBRARY.get(category, HEALTHY_LIBRARY['Snack'])
+        
+        recommendations = []
+        for candidate in candidates:
+            # Skip if it's the same product (by name or ID)
+            if candidate['product_id'] == current_product_data.get('product_id') or \
+               candidate['name'].lower() == current_product_data.get('name', '').lower():
+                continue
+                
+            # Score the candidate for this user
+            score, _, _ = self.predict(candidate, user_profile)
+            
+            # Only recommend if it's better than current score
+            if score > current_score:
+                recommendations.append({
+                    'name': candidate['name'],
+                    'product_id': candidate['product_id'],
+                    'suitability_score': round(score, 1),
+                    'improvement_score': round(score - current_score, 1),
+                    'image_url': candidate.get('image_url')
+                })
+        
+        # Return top 3 recommendations sorted by score
+        return sorted(recommendations, key=lambda x: x['suitability_score'], reverse=True)[:3]
+
+    def get_additive_details(self, additive_ids: List[str]) -> List[dict]:
+        """Get detailed health impact for a list of E-numbers."""
+        ADDITIVE_DB = {
+            'E102': {'name': 'Tartrazine', 'risk': 'high', 'description': 'Artificial yellow dye. Linked to hyperactivity in children and asthma.'},
+            'E110': {'name': 'Sunset Yellow', 'risk': 'high', 'description': 'Artificial orange dye. Banned in some countries due to health concerns.'},
+            'E129': {'name': 'Allura Red', 'risk': 'high', 'description': 'Artificial red dye. May cause allergic reactions in some people.'},
+            'E133': {'name': 'Brilliant Blue', 'risk': 'moderate', 'description': 'Synthetic dye. Generally safe but limited intake recommended.'},
+            'E150C': {'name': 'Ammonia Caramel', 'risk': 'moderate', 'description': 'Coloring agent. Some studies suggest potential inflammatory effects.'},
+            'E202': {'name': 'Potassium Sorbate', 'risk': 'low', 'description': 'Common preservative. Generally recognized as safe.'},
+            'E211': {'name': 'Sodium Benzoate', 'risk': 'moderate', 'description': 'Preservative. Can react with Vitamin C to form benzene in soft drinks.'},
+            'E330': {'name': 'Citric Acid', 'risk': 'low', 'description': 'Natural acidity regulator. Very safe.'},
+            'E415': {'name': 'Xanthan Gum', 'risk': 'low', 'description': 'Thickener. Safe for most, though may cause digestive issues in large amounts.'},
+            'E440': {'name': 'Pectin', 'risk': 'low', 'description': 'Natural thickener from fruit. Very safe.'},
+            'E621': {'name': 'MSG (Monosodium Glutamate)', 'risk': 'moderate', 'description': 'Flavor enhancer. Some people report sensitivity (headaches, sweating).'},
+            'E951': {'name': 'Aspartame', 'risk': 'moderate', 'description': 'Artificial sweetener. Controversial; some concerns about long-term neurological impact.'},
+            'E955': {'name': 'Sucralose', 'risk': 'moderate', 'description': 'Artificial sweetener. May impact gut microbiome in high amounts.'},
+        }
+        
+        details = []
+        for aid in additive_ids:
+            # Clean ID (remove trailing 'i', etc)
+            clean_id = aid.upper()
+            if clean_id in ADDITIVE_DB:
+                details.append({
+                    'id': clean_id,
+                    **ADDITIVE_DB[clean_id]
+                })
+            else:
+                # Fallback for unknown additives
+                details.append({
+                    'id': clean_id,
+                    'name': f'Additive {clean_id}',
+                    'risk': 'low',
+                    'description': 'Information not available, but generally used in safe quantities.'
+                })
+        return details
+
 
 # Global instance (singleton pattern)
 _engine_instance = None
