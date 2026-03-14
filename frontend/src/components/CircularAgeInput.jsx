@@ -35,7 +35,7 @@ export function CircularAgeInput({ value, onChange }) {
     return (
         <div className="relative w-48 h-48 mx-auto flex items-center justify-center select-none touch-none">
             {/* Glow / Track */}
-            <div ref={constraintsRef} className="absolute inset-0 rounded-full border-4 border-white/5 shadow-[0_0_30px_rgba(22,224,160,0.1)]"></div>
+            <div ref={constraintsRef} className="absolute inset-0 rounded-full border-4 border-[var(--glass-border)] opacity-20 shadow-[0_0_30px_rgba(22,224,160,0.1)]"></div>
 
             {/* Active Arc */}
             <svg className="absolute inset-0 w-full h-full transform -rotate-90 pointer-events-none">
@@ -61,15 +61,15 @@ export function CircularAgeInput({ value, onChange }) {
                 dragMomentum={false}
                 onDrag={handleDrag}
             >
-                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-black border-2 border-primary rounded-full shadow-[0_0_10px_rgba(22,224,160,0.7)] z-10 flex items-center justify-center">
+                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-[var(--background)] border-2 border-primary rounded-full shadow-[0_0_10px_rgba(22,224,160,0.7)] z-10 flex items-center justify-center">
                     <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
                 </div>
             </motion.div>
 
             {/* Center Text */}
             <div className="text-center z-0 pointer-events-none">
-                <span className="text-gray-500 text-[10px] uppercase tracking-widest font-extrabold block mb-0">Age</span>
-                <span className="text-5xl font-black text-white tabular-nums drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]">
+                <span className="text-[var(--text-secondary)] text-[10px] uppercase tracking-widest font-extrabold block mb-0">Age</span>
+                <span className="text-5xl font-black text-[var(--text-main)] tabular-nums drop-shadow-[0_0_10px_rgba(var(--glow-rgb),0.2)]">
                     {value}
                 </span>
             </div>

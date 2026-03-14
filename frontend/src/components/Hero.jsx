@@ -16,8 +16,8 @@ export function Hero({ onStart, onLearnMore }) {
 
             {/* Cinematic Background Elements (Overlays) */}
             <div className="absolute inset-0 z-0 pointer-events-none">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(22,224,160,0.05)_0%,transparent_60%)]"></div>
-                <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,var(--glow-color)_0%,transparent_60%)]"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-[var(--background)] via-transparent to-[var(--background)]"></div>
             </div>
 
             {/* Content Overlay */}
@@ -30,19 +30,19 @@ export function Hero({ onStart, onLearnMore }) {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6 }}
-                        className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-2xl mb-12 shadow-2xl"
+                        className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-[var(--card-bg)] border border-[var(--glass-border)] backdrop-blur-2xl mb-12 shadow-2xl"
                     >
                         <Sparkles className="w-5 h-5 text-primary animate-pulse" />
-                        <span className="text-sm text-emerald-100 font-bold uppercase tracking-[0.2em]">Next-Gen Health Intelligence</span>
+                        <span className="text-sm text-[var(--text-main)] font-bold uppercase tracking-[0.2em]">Next-Gen Health Intelligence</span>
                     </motion.div>
 
-                    <h1 className="text-6xl md:text-8xl lg:text-9xl font-black mb-8 leading-[0.95] tracking-tighter text-white">
+                    <h1 className="text-6xl md:text-8xl lg:text-9xl font-black mb-8 leading-[0.95] tracking-tighter text-[var(--text-main)]">
                         EAT <span className="text-transparent bg-clip-text bg-gradient-to-br from-primary via-emerald-400 to-cyan-400">SMARTER</span>.<br />
-                        LIVE <span className="text-white">BETTER</span>.
+                        LIVE <span className="text-[var(--text-main)]">BETTER</span>.
                     </h1>
 
-                    <p className="text-lg md:text-2xl text-gray-400 mb-16 font-medium leading-relaxed max-w-3xl mx-auto">
-                        Your DNA is unique. Your diet should be too. <span className="text-white">NutriGuard AI</span> decodes clinical data to guide every bite you take.
+                    <p className="text-lg md:text-2xl text-[var(--text-secondary)] mb-16 font-medium leading-relaxed max-w-3xl mx-auto">
+                        Your DNA is unique. Your diet should be too. <span className="text-[var(--text-main)] font-bold">NutriGuard AI</span> decodes clinical data to guide every bite you take.
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-6 w-full sm:w-auto">
@@ -67,7 +67,7 @@ export function Hero({ onStart, onLearnMore }) {
                 transition={{ delay: 1 }}
                 className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4"
             >
-                <span className="text-[10px] font-black tracking-[0.4em] text-white/30 uppercase"></span>
+                <span className="text-[10px] font-black tracking-[0.4em] text-[var(--text-secondary)] opacity-30 uppercase"></span>
                 <div className="w-[2px] h-12 bg-gradient-to-b from-primary/50 to-transparent rounded-full overflow-hidden">
                     <motion.div
                         animate={{ y: [0, 48, 0] }}

@@ -25,7 +25,7 @@ export const AuthForm = ({ isOpen, onClose, onLogin }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-[var(--background)]/80 backdrop-blur-sm transition-colors duration-300">
             <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -33,16 +33,16 @@ export const AuthForm = ({ isOpen, onClose, onLogin }) => {
             >
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 p-2 text-white/40 hover:text-white transition-colors"
+                    className="absolute top-4 right-4 p-2 text-[var(--text-secondary)] hover:text-primary transition-colors"
                 >
                     <X className="w-6 h-6" />
                 </button>
 
                 <div className="text-center mb-8">
-                    <h2 className="text-3xl font-black mb-2">
+                    <h2 className="text-3xl font-black mb-2 text-[var(--text-main)]">
                         {isLogin ? 'Welcome Back' : 'Create Account'}
                     </h2>
-                    <p className="text-white/50 text-sm">
+                    <p className="text-[var(--text-secondary)] text-sm">
                         {isLogin
                             ? 'Enter your credentials to access your health dashboard.'
                             : 'Join NutriGuard AI to get personalized food analysis.'}
@@ -52,12 +52,12 @@ export const AuthForm = ({ isOpen, onClose, onLogin }) => {
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {!isLogin && (
                         <div className="relative">
-                            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+                            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-secondary)] opacity-50" />
                             <input
                                 type="text"
                                 placeholder="Full Name"
                                 required
-                                className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white focus:border-primary/50 focus:bg-primary/5 outline-none transition-all"
+                                className="w-full bg-[var(--background)] border border-[var(--glass-border)] rounded-xl py-3 pl-12 pr-4 text-[var(--text-main)] focus:border-primary/50 focus:bg-primary/5 outline-none transition-all"
                                 value={formData.fullName}
                                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                             />
@@ -65,24 +65,24 @@ export const AuthForm = ({ isOpen, onClose, onLogin }) => {
                     )}
 
                     <div className="relative">
-                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-secondary)] opacity-50" />
                         <input
                             type="email"
                             placeholder="Email Address"
                             required
-                            className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white focus:border-primary/50 focus:bg-primary/5 outline-none transition-all"
+                            className="w-full bg-[var(--background)] border border-[var(--glass-border)] rounded-xl py-3 pl-12 pr-4 text-[var(--text-main)] focus:border-primary/50 focus:bg-primary/5 outline-none transition-all"
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         />
                     </div>
 
                     <div className="relative">
-                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-secondary)] opacity-50" />
                         <input
                             type="password"
                             placeholder="Password"
                             required
-                            className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white focus:border-primary/50 focus:bg-primary/5 outline-none transition-all"
+                            className="w-full bg-[var(--background)] border border-[var(--glass-border)] rounded-xl py-3 pl-12 pr-4 text-[var(--text-main)] focus:border-primary/50 focus:bg-primary/5 outline-none transition-all"
                             value={formData.password}
                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                         />

@@ -13,34 +13,30 @@ export function NeuralFoodScene({ scrollProgress }) {
         const scroll = scrollProgress.get();
         const t = scroll; // 0 to 1
 
-        // 1. Fluid Path across scroll
-        // Horizontal swaying + Vertical travel
-        const driftX = Math.sin(time * 0.5) * 0.2;
-        const driftY = Math.cos(time * 0.3) * 0.2;
+        // 1. Fluid Path across scroll - Strictly pattern-based
+        // Moving in a predictable wave as the user scrolls
+        const targetX = Math.sin(t * Math.PI * 1.5) * (viewport.width * 0.35);
+        const targetY = -t * (viewport.height * 0.4) + 1; // Slight offset upwards
+        const targetZ = 4; // Constant depth for "zoomed in" look
 
-        const targetX = (Math.sin(t * Math.PI) * (viewport.width * 0.3)) + driftX;
-        const targetY = (-t * (viewport.height * 0.4)) + driftY;
-        const targetZ = t * 3;
-
-        const targetScale = 1 - (t * 0.3);
+        const targetScale = 0.75; // Reduced by 50% as requested
 
         if (groupRef.current) {
-            // More responsive lerp (0.1 instead of 0.05)
-            groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, 0.08);
-            groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY, 0.08);
-            groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, targetZ, 0.08);
+            // Smoothly move to target pattern positions
+            groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, 0.1);
+            groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY, 0.1);
+            groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, targetZ, 0.1);
 
-            const s = THREE.MathUtils.lerp(groupRef.current.scale.x, targetScale, 0.08);
-            groupRef.current.scale.setScalar(s);
+            groupRef.current.scale.setScalar(targetScale);
         }
     });
 
     return (
         <>
             <PerspectiveCamera makeDefault position={[0, 0, 10]} fov={50} />
-            <ambientLight intensity={1.5} />
-            <pointLight position={[10, 10, 10]} intensity={3} color="#16E0A0" />
-            <pointLight position={[-10, -10, -10]} intensity={2} color="#00C2FF" />
+            <ambientLight intensity={1.2} />
+            <pointLight position={[10, 10, 10]} intensity={2.5} color="#ffffff" />
+            <pointLight position={[-10, -10, -10]} intensity={1.5} color="#ffffff" />
 
             <group ref={groupRef}>
                 <NeuralFood scrollProgress={scrollProgress} />
@@ -49,8 +45,7 @@ export function NeuralFoodScene({ scrollProgress }) {
             <OrbitControls
                 enableZoom={false}
                 enablePan={false}
-                autoRotate={true}
-                autoRotateSpeed={1.2}
+                autoRotate={false}
             />
         </>
     );

@@ -24,7 +24,7 @@ export function Stats() {
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 }}
-                        className="text-5xl md:text-7xl font-heading font-bold text-white tracking-tight"
+                        className="text-5xl md:text-7xl font-heading font-bold text-[var(--text-main)] tracking-tight"
                     >
                         Numbers That <span className="text-primary">Matter</span>
                     </motion.h2>
@@ -43,10 +43,10 @@ export function Stats() {
                             <div className="text-4xl xs:text-5xl sm:text-7xl font-black text-primary mb-6 tracking-tighter drop-shadow-[0_0_15px_rgba(16,185,129,0.3)] duration-500">
                                 {stat.value}
                             </div>
-                            <div className="text-xl font-black text-white mb-2 tracking-tight group-hover:text-primary transition-colors">
+                            <div className="text-xl font-black text-[var(--text-main)] mb-2 tracking-tight group-hover:text-primary transition-colors">
                                 {stat.label}
                             </div>
-                            <div className="text-gray-500 font-bold uppercase text-[10px] tracking-[0.2em] group-hover:text-gray-300 transition-colors">
+                            <div className="text-[var(--text-secondary)] font-bold uppercase text-[10px] tracking-[0.2em] group-hover:opacity-80 transition-opacity">
                                 {stat.sub}
                             </div>
 

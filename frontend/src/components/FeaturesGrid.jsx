@@ -45,7 +45,7 @@ export function FeaturesGrid() {
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        className="text-5xl md:text-7xl font-heading font-bold text-white tracking-tight leading-tight"
+                        className="text-5xl md:text-7xl font-heading font-bold text-[var(--text-main)] tracking-tight leading-tight"
                     >
                         Built for Your <br /> Well-Being.
                     </motion.h2>
@@ -60,11 +60,11 @@ export function FeaturesGrid() {
                             transition={{ delay: i * 0.1 }}
                             className="glass-card glass-card-hover p-10 rounded-[2.5rem] flex flex-col items-center text-center group overflow-hidden relative w-[300px] shrink-0 snap-center"
                         >
-                            <div className="w-16 h-16 bg-[#16211C] rounded-2xl flex items-center justify-center mb-8 group-hover:bg-primary transition-colors">
+                            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-primary transition-colors">
                                 <f.icon className="w-8 h-8 text-primary group-hover:text-black transition-colors" />
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-4">{f.title}</h3>
-                            <p className="text-gray-400 text-lg leading-relaxed">{f.desc}</p>
+                            <h3 className="text-2xl font-bold text-[var(--text-main)] mb-4">{f.title}</h3>
+                            <p className="text-[var(--text-secondary)] text-lg leading-relaxed">{f.desc}</p>
                         </motion.div>
                     ))}
                 </div>

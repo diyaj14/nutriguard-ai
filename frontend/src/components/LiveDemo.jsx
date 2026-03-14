@@ -73,7 +73,7 @@ export function LiveDemo() {
     }
 
     return (
-        <section id="demo" className="min-h-screen py-12 md:py-24 bg-gradient-to-b from-gray-900 to-black relative">
+        <section id="demo" className="min-h-screen py-12 md:py-24 bg-transparent relative">
             <div className="container mx-auto px-4 max-w-3xl">
                 <motion.div
                     className="text-center mb-8"
@@ -81,15 +81,15 @@ export function LiveDemo() {
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                 >
-                    <h2 className="text-3xl font-bold text-white mb-2">
+                    <h2 className="text-3xl font-bold text-[var(--text-main)] mb-2">
                         Live Demo
                     </h2>
-                    <p className="text-gray-400 text-sm">
+                    <p className="text-[var(--text-secondary)] text-sm opacity-60">
                         Try the personalization engine.
                     </p>
                 </motion.div>
 
-                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-12 shadow-2xl relative overflow-hidden min-h-[600px]">
+                <div className="glass-card rounded-3xl p-6 md:p-12 shadow-2xl relative overflow-hidden min-h-[600px]">
                     {/* Decorative Elements */}
                     <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full filter blur-3xl pointer-events-none" />
 
@@ -119,7 +119,7 @@ export function LiveDemo() {
                                 <div className="w-full flex justify-start mb-4">
                                     <button
                                         onClick={resetProfile}
-                                        className="flex items-center text-gray-400 hover:text-white transition-colors bg-white/5 px-3 py-2 rounded-lg"
+                                        className="flex items-center text-[var(--text-secondary)] hover:text-primary transition-colors bg-[var(--background)]/10 px-3 py-2 rounded-lg"
                                     >
                                         <ChevronLeft className="w-4 h-4 mr-1" />
                                         <span className="text-sm">Profile</span>
@@ -146,7 +146,7 @@ export function LiveDemo() {
                                 <div className="w-full flex justify-between mb-4">
                                     <button
                                         onClick={resetScan}
-                                        className="flex items-center text-gray-400 hover:text-white transition-colors bg-white/5 px-3 py-2 rounded-lg"
+                                        className="flex items-center text-[var(--text-secondary)] hover:text-primary transition-colors bg-[var(--background)]/10 px-3 py-2 rounded-lg"
                                     >
                                         <ChevronLeft className="w-4 h-4 mr-1" />
                                         <span className="text-sm">Back</span>

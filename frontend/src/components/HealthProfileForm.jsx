@@ -78,8 +78,8 @@ export function HealthProfileForm({ onComplete }) {
                         onClick={() => toggleFn(item.id)}
                         className={`relative px-4 py-3 rounded-2xl border-2 flex items-center gap-2 transition-all duration-300 transform active:scale-95 shadow-md
                         ${isSelected
-                                ? 'bg-primary/20 border-primary text-white shadow-[0_0_15px_rgba(22,224,160,0.2)]'
-                                : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/20'
+                                ? 'bg-primary/20 border-primary text-[var(--text-main)] shadow-[0_0_15px_rgba(22,224,160,0.2)]'
+                                : 'bg-[var(--background)]/5 border-[var(--glass-border)] text-[var(--text-secondary)] hover:border-primary/40'
                             }
                     `}
                     >
@@ -102,7 +102,7 @@ export function HealthProfileForm({ onComplete }) {
                 {/* Progress Indicator */}
                 <div className="flex gap-1.5 mb-6">
                     {[0, 1, 2, 3].map(i => (
-                        <div key={i} className={`h-1 rounded-full transition-all duration-500 ${i <= step ? 'w-6 bg-primary' : 'w-1.5 bg-white/10'}`} />
+                        <div key={i} className={`h-1 rounded-full transition-all duration-500 ${i <= step ? 'w-6 bg-primary' : 'w-1.5 bg-[var(--text-secondary)] opacity-10'}`} />
                     ))}
                 </div>
 
@@ -115,8 +115,8 @@ export function HealthProfileForm({ onComplete }) {
                             exit={{ opacity: 0, scale: 0.9 }}
                             className="w-full text-center"
                         >
-                            <h2 className="text-2xl font-heading font-bold text-white mb-1">How old are you?</h2>
-                            <p className="text-gray-400 mb-6 text-sm">Drag the dial to adjust.</p>
+                            <h2 className="text-2xl font-heading font-bold text-[var(--text-main)] mb-1">How old are you?</h2>
+                            <p className="text-[var(--text-secondary)] mb-6 text-sm">Drag the dial to adjust.</p>
                             <CircularAgeInput value={profile.age} onChange={v => setProfile({ ...profile, age: v })} />
                         </motion.div>
                     )}
@@ -129,8 +129,8 @@ export function HealthProfileForm({ onComplete }) {
                             exit={{ opacity: 0, x: -20 }}
                             className="w-full text-center"
                         >
-                            <h2 className="text-2xl font-heading font-bold text-white mb-1">Any Conditions?</h2>
-                            <p className="text-gray-400 mb-6 text-sm">Select all that apply.</p>
+                            <h2 className="text-2xl font-heading font-bold text-[var(--text-main)] mb-1">Any Conditions?</h2>
+                            <p className="text-[var(--text-secondary)] mb-6 text-sm">Select all that apply.</p>
                             {renderChips(conditions, profile.health_conditions, toggleCondition)}
                         </motion.div>
                     )}
@@ -143,8 +143,8 @@ export function HealthProfileForm({ onComplete }) {
                             exit={{ opacity: 0, x: -20 }}
                             className="w-full text-center"
                         >
-                            <h2 className="text-2xl font-heading font-bold text-white mb-1">Any Allergies?</h2>
-                            <p className="text-gray-400 mb-6 text-sm">We will filter these out.</p>
+                            <h2 className="text-2xl font-heading font-bold text-[var(--text-main)] mb-1">Any Allergies?</h2>
+                            <p className="text-[var(--text-secondary)] mb-6 text-sm">We will filter these out.</p>
                             {renderChips(allergies, profile.allergies, toggleAllergy)}
                         </motion.div>
                     )}
@@ -157,8 +157,8 @@ export function HealthProfileForm({ onComplete }) {
                             exit={{ opacity: 0, x: -20 }}
                             className="w-full text-center"
                         >
-                            <h2 className="text-2xl font-heading font-bold text-white mb-1">Your Goals?</h2>
-                            <p className="text-gray-400 mb-6 text-sm">What are you striving for?</p>
+                            <h2 className="text-2xl font-heading font-bold text-[var(--text-main)] mb-1">Your Goals?</h2>
+                            <p className="text-[var(--text-secondary)] mb-6 text-sm">What are you striving for?</p>
                             {renderChips(goals, null, toggleGoal, true)}
                         </motion.div>
                     )}
@@ -185,7 +185,7 @@ export function HealthProfileForm({ onComplete }) {
                 {step > 0 && (
                     <button
                         onClick={prevStep}
-                        className="w-full py-2 mt-2 text-gray-500 hover:text-white transition-colors flex items-center justify-center gap-2 text-xs"
+                        className="w-full py-2 mt-2 text-[var(--text-secondary)] hover:text-primary transition-colors flex items-center justify-center gap-2 text-xs"
                     >
                         <ChevronLeft className="w-3 h-3" /> Back
                     </button>

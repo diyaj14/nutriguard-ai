@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, Menu, X, ArrowRight, Scan, User, Shield, BarChart2 } from 'lucide-react';
+import { Activity, Menu, X, ArrowRight, Scan, User, Shield, BarChart2, Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '../context/ThemeContext';
 
 export function Navbar({ onGoHome, isAppActive, onSetView, currentView, hasProfile, currentUser, onLoginClick, onLogout }) {
+    const { theme, toggleTheme } = useTheme();
     const [isScrolled, setIsScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -29,12 +31,12 @@ export function Navbar({ onGoHome, isAppActive, onSetView, currentView, hasProfi
                     <a href="#home" onClick={(e) => { e.preventDefault(); onGoHome(); }} className="flex items-center gap-3 group">
                         <div className="relative">
                             <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full group-hover:bg-primary/40 transition-all duration-500"></div>
-                            <div className="relative w-11 h-11 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-xl flex items-center justify-center border border-white/10 shadow-2xl group-hover:scale-110 transition-all duration-500 overflow-hidden">
+                             <div className="relative w-11 h-11 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-xl flex items-center justify-center border border-[var(--glass-border)] shadow-2xl group-hover:scale-110 transition-all duration-500 overflow-hidden">
                                 <div className="absolute inset-0 bg-gradient-to-br from-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                 <Shield className="text-primary w-6 h-6 z-10 filter drop-shadow-[0_0_8px_rgba(22,224,160,0.6)]" />
                             </div>
                         </div>
-                        <span className="font-heading font-black text-2xl tracking-tight text-white flex items-center gap-2">
+                        <span className="font-heading font-black text-2xl tracking-tight text-[var(--text-main)] flex items-center gap-2">
                             NutriGuard <span className="text-primary text-[10px] font-black bg-primary/10 px-2.5 py-1 rounded-full border border-primary/20 tracking-widest uppercase shadow-[0_0_15px_rgba(22,224,160,0.2)]">AI</span>
                         </span>
                     </a>
@@ -48,7 +50,7 @@ export function Navbar({ onGoHome, isAppActive, onSetView, currentView, hasProfi
                                         key={link.name}
                                         href={link.href}
                                         onClick={link.onClick}
-                                        className="text-sm font-semibold text-gray-400 hover:text-white transition-all relative group flex items-center gap-2"
+                                        className="text-sm font-semibold text-[var(--text-secondary)] hover:text-primary transition-all relative group flex items-center gap-2"
                                     >
                                         <span className="w-1.5 h-1.5 rounded-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity"></span>
                                         {link.name}
@@ -59,25 +61,25 @@ export function Navbar({ onGoHome, isAppActive, onSetView, currentView, hasProfi
                         )}
 
                         <div className="flex items-center gap-3 md:gap-4">
-                            {isAppActive && (
-                                <div className="flex items-center gap-1 sm:gap-2 bg-white/5 p-1 rounded-full border border-white/10">
+                             {isAppActive && (
+                                <div className="flex items-center gap-1 sm:gap-2 bg-[var(--background)]/10 p-1 rounded-full border border-[var(--glass-border)]">
                                     <button
                                         onClick={() => onSetView('scanner')}
-                                        className={`p-2 rounded-full transition-all ${currentView === 'scanner' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-white'}`}
+                                        className={`p-2 rounded-full transition-all ${currentView === 'scanner' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-[var(--text-secondary)] hover:text-[var(--text-main)]'}`}
                                         title="Scanner"
                                     >
                                         <Scan className="w-4 h-4" />
                                     </button>
                                     <button
                                         onClick={() => onSetView('dashboard')}
-                                        className={`p-2 rounded-full transition-all ${currentView === 'dashboard' ? 'bg-secondary text-white shadow-lg shadow-secondary/20' : 'text-gray-400 hover:text-white'}`}
+                                        className={`p-2 rounded-full transition-all ${currentView === 'dashboard' ? 'bg-secondary text-white shadow-lg shadow-secondary/20' : 'text-[var(--text-secondary)] hover:text-[var(--text-main)]'}`}
                                         title="Dashboard"
                                     >
                                         <BarChart2 className="w-4 h-4" />
                                     </button>
                                     <button
                                         onClick={() => onSetView('profile')}
-                                        className={`p-2 rounded-full transition-all ${currentView === 'profile' ? 'bg-white text-black shadow-lg shadow-white/10' : 'text-gray-400 hover:text-white'}`}
+                                        className={`p-2 rounded-full transition-all ${currentView === 'profile' ? 'bg-[var(--text-main)] text-[var(--background)] shadow-lg shadow-white/10' : 'text-[var(--text-secondary)] hover:text-[var(--text-main)]'}`}
                                         title="Profile"
                                     >
                                         <User className="w-4 h-4" />
@@ -85,16 +87,24 @@ export function Navbar({ onGoHome, isAppActive, onSetView, currentView, hasProfi
                                 </div>
                             )}
 
-                            {!isAppActive && !mobileMenuOpen && (
+                             {!isAppActive && !mobileMenuOpen && (
                                 <div className="hidden sm:flex items-center gap-4">
+                                    <button
+                                        onClick={toggleTheme}
+                                        className="p-3 rounded-full hover:bg-white/10 transition-all text-[var(--text-secondary)] hover:text-primary"
+                                        title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                                    >
+                                        {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                                    </button>
+
                                     {currentUser ? (
                                         <div className="flex items-center gap-4">
-                                            <span className="text-sm font-bold text-white/70">
+                                            <span className="text-sm font-bold text-[var(--text-secondary)]">
                                                 Hello, <span className="text-primary">{currentUser.fullName}</span>
                                             </span>
-                                            <button
+                                             <button
                                                 onClick={onLogout}
-                                                className="text-[10px] font-black uppercase tracking-widest text-white/30 hover:text-red-500 transition-colors bg-white/5 px-3 py-1.5 rounded-lg border border-white/10"
+                                                className="text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)] hover:text-red-500 transition-colors bg-[var(--background)]/10 px-3 py-1.5 rounded-lg border border-[var(--glass-border)]"
                                             >
                                                 Log Out
                                             </button>
@@ -102,7 +112,7 @@ export function Navbar({ onGoHome, isAppActive, onSetView, currentView, hasProfi
                                     ) : (
                                         <button
                                             onClick={onLoginClick}
-                                            className="text-sm font-bold text-white/70 hover:text-white transition-all px-4"
+                                            className="text-sm font-bold text-[var(--text-secondary)] hover:text-primary transition-all px-4"
                                         >
                                             Log In
                                         </button>
@@ -117,24 +127,40 @@ export function Navbar({ onGoHome, isAppActive, onSetView, currentView, hasProfi
                                 </div>
                             )}
 
-                            {/* Menu Toggle */}
+                             {/* Menu Toggle */}
                             {!isAppActive && (
-                                <button
-                                    className={`text-white p-3 rounded-full transition-all duration-300 ${mobileMenuOpen ? 'bg-white/10 rotate-90' : 'hover:bg-white/5 active:scale-90'}`}
-                                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                                >
-                                    {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                                </button>
+                                <div className="flex items-center gap-2 lg:hidden">
+                                    <button
+                                        onClick={toggleTheme}
+                                        className="p-3 rounded-full hover:bg-white/10 transition-all text-[var(--text-secondary)]"
+                                    >
+                                        {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                                    </button>
+                                     <button
+                                        className={`text-[var(--text-main)] p-3 rounded-full transition-all duration-300 ${mobileMenuOpen ? 'bg-[var(--background)]/10 rotate-90' : 'hover:bg-[var(--background)]/5 active:scale-90'}`}
+                                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                                    >
+                                        {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                                    </button>
+                                </div>
                             )}
 
                             {isAppActive && (
-                                <button
-                                    onClick={onGoHome}
-                                    className="p-3 rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-red-500/10 hover:border-red-500/20 transition-all"
-                                    title="Exit to Home"
-                                >
-                                    <X className="w-5 h-5" />
-                                </button>
+                                <div className="flex items-center gap-4">
+                                    <button
+                                        onClick={toggleTheme}
+                                        className="p-3 rounded-full hover:bg-white/5 transition-all text-[var(--text-secondary)] hover:text-primary"
+                                    >
+                                        {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                                    </button>
+                                    <button
+                                        onClick={onGoHome}
+                                        className="p-3 rounded-full bg-[var(--card-bg)] border border-[var(--glass-border)] text-[var(--text-secondary)] hover:text-[var(--text-main)] hover:bg-red-500/10 hover:border-red-500/20 transition-all"
+                                        title="Exit to Home"
+                                    >
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                </div>
                             )}
                         </div>
                     </div>
@@ -148,18 +174,18 @@ export function Navbar({ onGoHome, isAppActive, onSetView, currentView, hasProfi
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className="fixed inset-0 bg-[#0B0F14] z-[150] flex flex-col p-6 md:p-12 overflow-hidden"
+                        className="fixed inset-0 bg-[var(--background)] z-[150] flex flex-col p-6 md:p-12 overflow-hidden"
                     >
                         {/* Menu Header */}
                         <div className="flex items-center justify-between w-full mb-12">
                             <div className="flex items-center gap-2">
                                 <Activity className="text-primary w-8 h-8" />
-                                <span className="font-heading font-bold text-2xl text-white flex items-center gap-1">
+                                <span className="font-heading font-bold text-2xl text-[var(--text-main)] flex items-center gap-1">
                                     NutriGuard <span className="text-primary text-xs font-bold bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">AI</span>
                                 </span>
                             </div>
-                            <button
-                                className="text-white p-2 rounded-full hover:bg-white/10 transition-colors bg-white/5"
+                             <button
+                                className="text-[var(--text-main)] p-2 rounded-full hover:bg-[var(--background)]/20 transition-colors bg-[var(--card-bg)]"
                                 onClick={() => setMobileMenuOpen(false)}
                             >
                                 <X className="w-8 h-8" />
@@ -175,7 +201,7 @@ export function Navbar({ onGoHome, isAppActive, onSetView, currentView, hasProfi
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.1 }}
-                                    className="text-4xl xs:text-5xl sm:text-7xl font-heading font-black text-white hover:text-primary transition-all duration-300 tracking-tighter flex items-center gap-4 group"
+                                    className="text-4xl xs:text-5xl sm:text-7xl font-heading font-black text-[var(--text-main)] hover:text-primary transition-all duration-300 tracking-tighter flex items-center gap-4 group"
                                 >
                                     <span className="text-primary/20 text-xl font-mono group-hover:text-primary transition-colors">0{i + 1}</span>
                                     {link.name}
@@ -184,11 +210,11 @@ export function Navbar({ onGoHome, isAppActive, onSetView, currentView, hasProfi
                         </div>
 
                         {/* Bottom Section */}
-                        <div className="mt-auto pt-8 border-t border-white/5 bg-[#0B0F14]/50 backdrop-blur-sm -mx-6 px-6">
+                        <div className="mt-auto pt-8 border-t border-[var(--glass-border)] bg-[var(--background)]/80 backdrop-blur-sm -mx-6 px-6">
                             <div className="flex flex-col xs:flex-row gap-6 items-center justify-between pb-8">
                                 <div className="flex gap-4">
                                     {[Scan, User, BarChart2].map((Icon, idx) => (
-                                        <div key={idx} className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:text-primary hover:border-primary transition-colors cursor-pointer bg-white/5">
+                                        <div key={idx} className="w-12 h-12 rounded-full border border-[var(--glass-border)] flex items-center justify-center text-[var(--text-secondary)] hover:text-primary hover:border-primary transition-colors cursor-pointer bg-[var(--card-bg)]">
                                             <Icon className="w-5 h-5" />
                                         </div>
                                     ))}
@@ -196,14 +222,14 @@ export function Navbar({ onGoHome, isAppActive, onSetView, currentView, hasProfi
                                 <div className="flex items-center gap-4">
                                     {currentUser ? (
                                         <div className="flex flex-col">
-                                            <span className="text-xs font-bold text-white/50 uppercase tracking-widest mb-1">Account</span>
+                                            <span className="text-xs font-bold text-[var(--text-secondary)] opacity-50 uppercase tracking-widest mb-1">Account</span>
                                             <span className="text-xl font-bold text-primary">{currentUser.fullName}</span>
                                             <button onClick={onLogout} className="text-xs text-red-500 font-bold mt-2 text-left">Log Out</button>
                                         </div>
                                     ) : (
                                         <button
                                             onClick={() => { setMobileMenuOpen(false); onLoginClick(); }}
-                                            className="text-xl font-bold text-white hover:text-primary transition-colors"
+                                            className="text-xl font-bold text-[var(--text-main)] hover:text-primary transition-colors"
                                         >
                                             Log In
                                         </button>

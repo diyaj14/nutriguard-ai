@@ -42,13 +42,13 @@ export function HowItWorks() {
                             transition={{ delay: idx * 0.1 }}
                             className="glass-card glass-card-hover p-10 rounded-[2.5rem] flex flex-col items-center text-center gap-8 group w-[300px] shrink-0 snap-center"
                         >
-                            <div className="w-20 h-20 bg-[#16211C] rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
+                             <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
                                 <step.icon className="w-10 h-10 text-primary group-hover:text-black transition-colors" />
                             </div>
                             <div>
-                                <span className="text-gray-500 font-bold text-lg mb-2 block">{step.number}</span>
-                                <h3 className="text-2xl md:text-3xl font-bold text-white mb-4 tracking-tight">{step.title}</h3>
-                                <p className="text-gray-400 text-lg leading-relaxed">{step.desc}</p>
+                                <span className="text-[var(--text-main)] font-bold text-lg mb-2 block">{step.number}</span>
+                                <h3 className="text-2xl md:text-3xl font-bold text-[var(--text-main)] mb-4 tracking-tight">{step.title}</h3>
+                                <p className="text-[var(--text-secondary)] text-lg leading-relaxed">{step.desc}</p>
                             </div>
                         </motion.div>
                     ))}

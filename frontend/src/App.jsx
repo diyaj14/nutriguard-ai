@@ -19,6 +19,9 @@ import { LogIn, UserCircle, Check, AlertTriangle } from 'lucide-react';
 import { Canvas } from '@react-three/fiber';
 import { Suspense } from 'react';
 import { NeuralFoodScene } from './components/NeuralFoodScene';
+import { VideoShowcase } from './components/VideoShowcase';
+import { LiveDemo } from './components/LiveDemo';
+
 
 function App() {
   const { scrollYProgress } = useScroll();
@@ -117,7 +120,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-background text-white font-sans selection:bg-primary/30 relative">
+    <div className="min-h-screen w-full bg-[var(--background)] text-[var(--text-main)] font-sans selection:bg-primary/30 relative transition-colors duration-300">
       {/* GLOBAL 3D SCENE BACKGROUND */}
       {!isAppActive && (
         <div className="fixed inset-0 z-0 pointer-events-none">
@@ -166,6 +169,10 @@ function App() {
                   }}
                 />
               </section>
+            
+               {/* VIDEO SHOWCASE SECTION */}
+              <VideoShowcase />
+
 
               {/* STATS SECTION */}
               <Stats />
@@ -175,6 +182,9 @@ function App() {
 
               {/* FEATURES SECTION */}
               <FeaturesGrid />
+
+             
+            
 
               {/* BUSINESS PLAN SECTION */}
               <div id="plans">
@@ -198,7 +208,7 @@ function App() {
                     className="h-[calc(100vh-80px)] w-full flex flex-col items-center justify-center p-4 overflow-hidden"
                   >
                     <div className="w-full max-w-md h-full flex flex-col justify-center">
-                      <div className="glass-card rounded-[2.5rem] p-4 md:p-8 flex flex-col backdrop-blur-3xl border border-white/10 relative overflow-hidden shadow-2xl">
+                      <div className="glass-card rounded-[2.5rem] p-4 md:p-8 flex flex-col backdrop-blur-3xl border border-[var(--glass-border)] relative overflow-hidden shadow-2xl">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-full blur-[40px] pointer-events-none"></div>
                         <div className="absolute bottom-0 left-0 w-32 h-32 bg-primary/10 rounded-full blur-[40px] pointer-events-none"></div>
                         <div className="relative z-10 w-full">
@@ -231,7 +241,7 @@ function App() {
                           key="scanner-ui"
                           initial={{ opacity: 0, scale: 0.95 }}
                           animate={{ opacity: 1, scale: 1 }}
-                          className="w-full glass-card p-4 sm:p-8 rounded-[2.5rem] border border-white/10 relative overflow-hidden shadow-2xl"
+                          className="w-full glass-card p-4 sm:p-8 rounded-[2.5rem] border border-[var(--glass-border)] relative overflow-hidden shadow-2xl"
                         >
                           <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-secondary/5 pointer-events-none"></div>
 
@@ -243,7 +253,7 @@ function App() {
                           ) : (
                             <button
                               onClick={() => setAppView('profile')}
-                              className="w-full mb-4 flex flex-col items-center justify-center gap-1.5 bg-yellow-400/5 py-2 px-4 rounded-xl border border-yellow-400/10 hover:bg-yellow-400/10 transition-all group"
+                              className="w-full mb-4 flex flex-col items-center justify-center gap-1.5 bg-yellow-500/10 py-2 px-4 rounded-xl border border-yellow-500/20 hover:bg-yellow-500/20 transition-all group"
                             >
                               <div className="flex items-center gap-2">
                                 <AlertTriangle className="w-3 h-3 text-yellow-500" />

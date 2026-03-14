@@ -36,12 +36,12 @@ export function Science() {
                             Nutrigenomics Core
                         </motion.span>
 
-                        <h2 className="text-6xl md:text-8xl font-black text-white mb-10 leading-[0.9] tracking-tighter">
+                        <h2 className="text-6xl md:text-8xl font-black text-[var(--text-main)] mb-10 leading-[0.9] tracking-tighter">
                             YOUR <span className="text-primary">DNA</span> IS THE <br />
-                            <span className="text-white/50 italic">BLUEPRINT.</span>
+                            <span className="opacity-50 italic">BLUEPRINT.</span>
                         </h2>
 
-                        <p className="text-xl md:text-2xl text-gray-400 mb-16 leading-relaxed font-medium">
+                        <p className="text-xl md:text-2xl text-[var(--text-secondary)] mb-16 leading-relaxed font-medium">
                             NutriGuard's engine doesn't just read labels. It simulates how your specific genetic profile interacts with biochemical compounds in real-time.
                         </p>
 
@@ -52,11 +52,11 @@ export function Science() {
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     transition={{ delay: i * 0.1 }}
-                                    className="p-6 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-xl"
+                                    className="p-6 rounded-3xl bg-[var(--card-bg)] border border-[var(--glass-border)] backdrop-blur-xl transition-colors duration-300"
                                 >
                                     <stat.icon className="w-8 h-8 text-primary mb-4" />
-                                    <div className="text-3xl font-black text-white mb-1">{stat.value}</div>
-                                    <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">{stat.label}</div>
+                                    <div className="text-3xl font-black text-[var(--text-main)] mb-1">{stat.value}</div>
+                                    <div className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest">{stat.label}</div>
                                 </motion.div>
                             ))}
                         </div>
@@ -69,7 +69,7 @@ export function Science() {
                         {/* THE "BRAIN" VISUAL */}
                         <div className="relative aspect-square max-w-[500px] mx-auto group">
                             <div className="absolute inset-0 bg-primary/20 blur-[150px] group-hover:bg-primary/40 transition-colors duration-700" />
-                            <div className="relative h-full w-full rounded-[4rem] bg-[#050505] border border-white/10 overflow-hidden flex items-center justify-center p-12">
+                            <div className="relative h-full w-full rounded-[4rem] bg-[var(--background)] border border-[var(--glass-border)] overflow-hidden flex items-center justify-center p-12 transition-colors duration-300">
                                 <div className="text-center">
                                     <motion.div
                                         animate={{
@@ -81,7 +81,7 @@ export function Science() {
                                     >
                                         AI
                                     </motion.div>
-                                    <h3 className="text-9xl font-black text-white relative z-10 tracking-tighter">AI</h3>
+                                    <h3 className="text-9xl font-black text-[var(--text-main)] relative z-10 tracking-tighter">AI</h3>
                                     <p className="text-primary font-black tracking-[0.6em] uppercase text-xs mt-6 relative z-10">
                                         Clinical Inference Engine
                                     </p>

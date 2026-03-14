@@ -35,21 +35,21 @@ export function ScoreDisplay({ result, onReset }) {
                     {image_url ? (
                         <img src={image_url} alt={name} className="w-20 h-20 object-contain drop-shadow-lg" />
                     ) : (
-                        <div className="w-20 h-20 bg-white/5 rounded-2xl flex items-center justify-center text-3xl border border-white/10">📦</div>
+                        <div className="w-20 h-20 bg-[var(--background)]/5 rounded-2xl flex items-center justify-center text-3xl border border-[var(--glass-border)]">📦</div>
                     )}
 
                     <div className="text-right flex-1 ml-4">
-                        <h2 className="text-lg font-bold text-white leading-tight mb-1">{name || "Unknown"}</h2>
-                        <span className="text-xs text-gray-400 font-mono bg-white/5 px-2 py-1 rounded-md inline-block">{nutrition?.energy_kcal_100g ? `${Math.round(nutrition.energy_kcal_100g)} kcal` : 'N/A'}</span>
+                        <h2 className="text-lg font-bold text-[var(--text-main)] leading-tight mb-1">{name || "Unknown"}</h2>
+                        <span className="text-xs text-[var(--text-secondary)] font-mono bg-[var(--background)]/5 px-2 py-1 rounded-md inline-block">{nutrition?.energy_kcal_100g ? `${Math.round(nutrition.energy_kcal_100g)} kcal` : 'N/A'}</span>
                     </div>
                 </div>
 
-                <div className="w-full h-px bg-white/5 mb-6"></div>
+                <div className="w-full h-px bg-[var(--glass-border)] opacity-20 mb-6"></div>
 
                 {/* Score Circle */}
                 <div className="relative w-32 h-32 flex items-center justify-center mb-6">
-                    <svg className="w-full h-full transform -rotate-90 drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]">
-                        <circle cx="64" cy="64" r={radius} fill="transparent" stroke="#1f2937" strokeWidth="6" />
+                    <svg className="w-full h-full transform -rotate-90 drop-shadow-[0_0_15px_rgba(0,0,0,0.2)]">
+                        <circle cx="64" cy="64" r={radius} fill="transparent" stroke="var(--glass-border)" strokeWidth="6" />
                         <circle
                             cx="64" cy="64" r={radius} fill="transparent" stroke="currentColor" strokeWidth="6"
                             strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round"
@@ -72,7 +72,7 @@ export function ScoreDisplay({ result, onReset }) {
                     </h3>
                     <ul className="space-y-2">
                         {warnings.map((warning, idx) => (
-                            <li key={idx} className="flex items-start text-red-200 text-xs">
+                            <li key={idx} className="flex items-start text-[var(--text-main)] text-xs opacity-80">
                                 <span className="mr-2 mt-1 w-1 h-1 bg-danger rounded-full flex-shrink-0"></span>
                                 {warning}
                             </li>
@@ -84,7 +84,7 @@ export function ScoreDisplay({ result, onReset }) {
             {/* AI Reasoning */}
             <div className="glass-card rounded-2xl p-5">
                 <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-base font-bold text-white flex items-center">
+                    <h3 className="text-base font-bold text-[var(--text-main)] flex items-center">
                         <Zap className="w-4 h-4 mr-2 text-secondary" />
                         AI Analysis
                     </h3>
@@ -96,12 +96,12 @@ export function ScoreDisplay({ result, onReset }) {
                         const isNegative = reason.includes('⚠️') || reason.includes('❌') || reason.toLowerCase().includes('high') || reason.toLowerCase().includes('poor');
 
                         return (
-                            <div key={idx} className="flex items-start p-3 rounded-xl bg-black/40 border border-white/5">
-                                <div className={`mr-3 mt-0.5 flex-shrink-0 ${isPositive ? 'text-primary' : isNegative ? 'text-warning' : 'text-gray-400'}`}>
+                            <div key={idx} className="flex items-start p-3 rounded-xl bg-primary/5 border border-primary/10">
+                                <div className={`mr-3 mt-0.5 flex-shrink-0 ${isPositive ? 'text-primary' : isNegative ? 'text-warning' : 'text-[var(--text-secondary)]'}`}>
                                     {isPositive ? <CheckCircle2 className="w-4 h-4" /> : isNegative ? <Info className="w-4 h-4" /> : <Info className="w-4 h-4" />}
                                 </div>
                                 <div>
-                                    <p className="text-gray-200 text-xs leading-relaxed font-medium">{reason}</p>
+                                    <p className="text-[var(--text-main)] opacity-90 text-xs leading-relaxed font-medium">{reason}</p>
                                 </div>
                             </div>
                         );
@@ -112,26 +112,26 @@ export function ScoreDisplay({ result, onReset }) {
             {/* Recommendations Panel */}
             {result.recommendations && result.recommendations.length > 0 && (
                 <div className="glass-card rounded-2xl p-5 border-primary/20 bg-primary/5">
-                    <h3 className="text-base font-bold text-white flex items-center mb-4">
+                    <h3 className="text-base font-bold text-[var(--text-main)] flex items-center mb-4">
                         <Zap className="w-4 h-4 mr-2 text-primary" />
                         Smart Alternatives
                     </h3>
                     <div className="space-y-3">
                         {result.recommendations.map((rec, idx) => (
-                            <div key={idx} className="flex items-center p-3 rounded-xl bg-black/40 border border-primary/10 hover:border-primary/30 transition-all cursor-pointer group">
+                            <div key={idx} className="flex items-center p-3 rounded-xl bg-[var(--background)]/40 border border-primary/10 hover:border-primary/30 transition-all cursor-pointer group">
                                 {rec.image_url ? (
-                                    <img src={rec.image_url} alt={rec.name} className="w-12 h-12 object-contain rounded-lg bg-white/5 p-1" />
+                                    <img src={rec.image_url} alt={rec.name} className="w-12 h-12 object-contain rounded-lg bg-[var(--background)]/5 p-1" />
                                 ) : (
-                                    <div className="w-12 h-12 bg-white/5 rounded-lg flex items-center justify-center text-xl">🥗</div>
+                                    <div className="w-12 h-12 bg-[var(--background)]/5 rounded-lg flex items-center justify-center text-xl">🥗</div>
                                 )}
                                 <div className="ml-3 flex-1">
-                                    <h4 className="text-xs font-bold text-white group-hover:text-primary transition-colors">{rec.name}</h4>
+                                    <h4 className="text-xs font-bold text-[var(--text-main)] group-hover:text-primary transition-colors">{rec.name}</h4>
                                     <div className="flex items-center mt-1">
                                         <div className="flex items-center text-primary font-bold mr-3">
                                             <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/20 mr-1.5">{Math.round(rec.suitability_score)}</span>
                                             <span className="text-[10px] uppercase tracking-wide">Score</span>
                                         </div>
-                                        <span className="text-[10px] text-gray-400">+{Math.round(rec.improvement_score)}% improvement</span>
+                                        <span className="text-[10px] text-[var(--text-secondary)]">+{Math.round(rec.improvement_score)}% improvement</span>
                                     </div>
                                 </div>
                             </div>
@@ -143,21 +143,21 @@ export function ScoreDisplay({ result, onReset }) {
             {/* Ingredient Intelligence */}
             {result.additive_details && result.additive_details.length > 0 && (
                 <div className="glass-card rounded-2xl p-5">
-                    <h3 className="text-base font-bold text-white flex items-center mb-4">
+                    <h3 className="text-base font-bold text-[var(--text-main)] flex items-center mb-4">
                         <Info className="w-4 h-4 mr-2 text-warning" />
                         Ingredient Intelligence
                     </h3>
                     <div className="space-y-3">
                         {result.additive_details.map((add, idx) => (
-                            <div key={idx} className="p-3 rounded-xl bg-black/40 border border-white/5">
+                            <div key={idx} className="p-3 rounded-xl bg-[var(--background)]/40 border border-[var(--glass-border)]">
                                 <div className="flex items-center justify-between mb-1.5">
-                                    <span className="text-xs font-bold text-white">{add.name} ({add.id})</span>
+                                    <span className="text-xs font-bold text-[var(--text-main)]">{add.name} ({add.id})</span>
                                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${add.risk === 'high' ? 'bg-danger/20 text-danger' : add.risk === 'moderate' ? 'bg-warning/20 text-warning' : 'bg-primary/20 text-primary'
                                         }`}>
                                         {add.risk} risk
                                     </span>
                                 </div>
-                                <p className="text-[11px] text-gray-400 leading-relaxed italic">{add.description}</p>
+                                <p className="text-[11px] text-[var(--text-secondary)] leading-relaxed italic">{add.description}</p>
                             </div>
                         ))}
                     </div>
@@ -165,7 +165,7 @@ export function ScoreDisplay({ result, onReset }) {
             )}
 
             <button
-                className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm font-bold text-gray-300 transition-all active:scale-95 mb-8"
+                className="w-full py-4 bg-[var(--card-bg)] hover:bg-primary/10 border border-[var(--glass-border)] rounded-xl text-sm font-bold text-[var(--text-main)] transition-all active:scale-95 mb-8"
                 onClick={onReset}
             >
                 Scan Another Product

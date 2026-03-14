@@ -1,6 +1,6 @@
 import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { MeshDistortMaterial, Float, Points, PointMaterial } from '@react-three/drei';
+import { useGLTF, Float, Points, PointMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
 export function NeuralFood({ scrollProgress }) {
@@ -9,31 +9,35 @@ export function NeuralFood({ scrollProgress }) {
     const particlesRef = useRef();
     const subParticlesRef = useRef();
 
-    // Procedural High-Definition Leaf Geometry
-    const leafGeometry = useMemo(() => {
-        const shape = new THREE.Shape();
-        // More organic, slightly curved leaf shape
-        shape.moveTo(0, -1.8);
-        shape.bezierCurveTo(0.8, -1.5, 1.8, -0.5, 1.8, 0.8);
-        shape.bezierCurveTo(1.8, 2.0, 0.5, 2.8, 0, 3.2); // Pointy top
-        shape.bezierCurveTo(-0.5, 2.8, -1.8, 2.0, -1.8, 0.8);
-        shape.bezierCurveTo(-1.8, -0.5, -0.8, -1.5, 0, -1.8);
+    // Load User's 3D Model
+    const { nodes } = useGLTF('/leaves.glb');
+    
+    // Logic to select only ONE leaf mesh from the model
+    const leafMesh = useMemo(() => {
+        const meshes = Object.values(nodes).filter(node => node.type === 'Mesh' || node.type === 'SkinnedMesh');
+        const original = meshes[0];
+        if (!original) return null;
         
-        const extrudeSettings = {
-            steps: 2,
-            depth: 0.1,
-            bevelEnabled: true,
-            bevelThickness: 0.15,
-            bevelSize: 0.2,
-            bevelOffset: 0,
-            bevelSegments: 12
-        };
-        
-        const geo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-        geo.computeVertexNormals();
-        geo.center();
-        return geo;
-    }, []);
+        const clone = original.clone();
+        clone.geometry = clone.geometry.clone();
+        clone.geometry.center(); // Ensure it's centered
+        return clone;
+    }, [nodes]);
+
+    // Apply biotech material properties to the custom model mesh
+    const biotechMaterial = useMemo(() => (
+        <meshPhysicalMaterial
+            color="#064E3B" // Deep Forest Green
+            emissive="#10B981" // Radiant highlight
+            emissiveIntensity={0.6}
+            roughness={0.1}
+            metalness={0.8}
+            transmission={0.4} // Subtle translucent effect
+            thickness={0.5}
+            clearcoat={1}
+            clearcoatRoughness={0.1}
+        />
+    ), []);
 
     // Dual-Color Particle System (Emerald & Amber)
     const [mainParticles, subParticles] = useMemo(() => {
@@ -56,23 +60,25 @@ export function NeuralFood({ scrollProgress }) {
         const time = state.clock.getElapsedTime();
         const scroll = scrollProgress ? scrollProgress.get() : 0;
 
-        // Realistic Wind/Breeze Motion (Gentle sway)
+        // Realistic Wind/Breeze Motion (Gentle sway) - Now fixed "straight"
         if (meshRef.current) {
-            meshRef.current.rotation.x = Math.sin(time * 0.3) * 0.15;
-            meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, time * 0.2 + (scroll * Math.PI), 0.05);
-            meshRef.current.rotation.z = Math.cos(time * 0.2) * 0.1;
+            // Keep it straight (upright based on original base orientation)
+            meshRef.current.rotation.x = Math.PI / 2;
+            meshRef.current.rotation.y = 0;
+            meshRef.current.rotation.z = 0;
         }
 
         if (outerRef.current) {
-            outerRef.current.rotation.y = meshRef.current.rotation.y;
-            outerRef.current.rotation.z = meshRef.current.rotation.z;
+            outerRef.current.rotation.y = 0;
+            outerRef.current.rotation.z = 0;
         }
 
         // Particle Orchestration
         if (particlesRef.current) {
             particlesRef.current.rotation.y = time * 0.05;
             particlesRef.current.position.y = Math.sin(time * 0.4) * 0.2;
-            const alpha = scroll > 0.4 ? (scroll - 0.4) * 2 : 0;
+            // Start from 0.4 opacity at top of page and grow to 1.0
+            const alpha = 0.4 + (scroll * 0.6);
             particlesRef.current.material.opacity = THREE.MathUtils.lerp(particlesRef.current.material.opacity, alpha, 0.1);
         }
 
@@ -84,35 +90,21 @@ export function NeuralFood({ scrollProgress }) {
 
     return (
         <group>
-            {/* Main Light Source to highlight 3D depth */}
-            <spotLight position={[5, 5, 5]} angle={0.15} penumbra={1} intensity={2} color="#10B981" castShadow />
-            <pointLight position={[-5, -5, -5]} intensity={1} color="#FBBF24" />
+            {/* Neutral Lighting to preserve original model colors */}
+            <ambientLight intensity={1.5} />
+            <spotLight position={[5, 5, 5]} angle={0.15} penumbra={1} intensity={3} color="#ffffff" castShadow />
+            <pointLight position={[-5, -5, -5]} intensity={2} color="#ffffff" />
 
-            <Float speed={2} rotationIntensity={0.5} floatIntensity={0.8}>
-                {/* Hyper-Realistic Biotech Leaf */}
-                <mesh geometry={leafGeometry} ref={meshRef}>
-                    <meshPhysicalMaterial
-                        color="#064E3B" // Deep Forest Green
-                        emissive="#10B981" // Radiant highlight
-                        emissiveIntensity={0.4}
-                        roughness={0.2}
-                        metalness={0.6}
-                        transmission={0.3} // Subtle translucent effect
-                        thickness={0.5}
-                        clearcoat={0.8}
-                        clearcoatRoughness={0.2}
-                    />
-                </mesh>
-
-                {/* Internal Nerve System (Wireframe) */}
-                <mesh geometry={leafGeometry} scale={1.02} ref={outerRef}>
-                    <meshStandardMaterial
-                        color="#34D399"
-                        wireframe
-                        transparent
-                        opacity={0.15}
-                    />
-                </mesh>
+            <Float speed={2} rotationIntensity={0} floatIntensity={0.8}>
+                {/* Authentic 3D Model Leaf - Using Original Material and Upright Orientation */}
+                {leafMesh && (
+                    <group 
+                        scale={2.2} 
+                        ref={meshRef}
+                    >
+                        <primitive object={leafMesh} />
+                    </group>
+                )}
             </Float>
 
             {/* Emerald Life Particles */}

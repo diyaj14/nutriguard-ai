@@ -20,21 +20,21 @@ const PlanCard = ({ title, price, features, icon: Icon, color, isPopular }) => {
                 <Icon className="w-6 h-6 text-white" />
             </div>
 
-            <h3 className="text-2xl font-black mb-1">{title}</h3>
+            <h3 className="text-2xl font-black mb-1 text-[var(--text-main)]">{title}</h3>
             <div className="flex items-baseline gap-1 mb-6">
-                <span className="text-4xl font-black">${price}</span>
-                <span className="text-white/40 text-sm">/month</span>
+                <span className="text-4xl font-black text-[var(--text-main)]">${price}</span>
+                <span className="text-[var(--text-secondary)] text-sm">/month</span>
             </div>
 
             <ul className="space-y-4 mb-8">
                 {features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start gap-3 text-sm text-white/70">
+                    <li key={idx} className="flex items-start gap-3 text-sm text-[var(--text-secondary)]">
                         {feature.included ? (
                             <Check className="w-5 h-5 text-primary flex-shrink-0" />
                         ) : (
-                            <X className="w-5 h-5 text-white/20 flex-shrink-0" />
+                            <X className="w-5 h-5 opacity-20 flex-shrink-0" />
                         )}
-                        <span className={feature.included ? '' : 'text-white/30'}>{feature.name}</span>
+                        <span className={feature.included ? '' : 'opacity-40'}>{feature.name}</span>
                     </li>
                 ))}
             </ul>
@@ -99,11 +99,11 @@ export const BusinessPlan = () => {
                 <motion.h2
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    className="text-4xl md:text-6xl font-black mb-4"
+                    className="text-4xl md:text-6xl font-black mb-4 text-[var(--text-main)]"
                 >
                     Choose Your <span className="text-primary">Shield</span>
                 </motion.h2>
-                <p className="text-white/50 max-w-2xl mx-auto">
+                <p className="text-[var(--text-secondary)] max-w-2xl mx-auto">
                     Scale your health tracking with our premium plans designed for everyone from individuals to whole families.
                 </p>
             </div>
