@@ -27,8 +27,8 @@
   --primary: #059669;
   --secondary: #10B981;
   --accent: #047857;
-  --card-bg: rgba(255, 255, 255, 0.95);
-  --navbar-bg: rgba(255, 255, 255, 0.9);
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --navbar-bg: rgba(255, 255, 255, 0.85);
   --glass-border: rgba(16, 185, 129, 0.2);
   --glass-border-hover: rgba(16, 185, 129, 0.5);
   --glow-color: rgba(16, 185, 129, 0.15);

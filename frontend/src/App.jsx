@@ -21,6 +21,8 @@ import { Suspense } from 'react';
 import { NeuralFoodScene } from './components/NeuralFoodScene';
 import { VideoShowcase } from './components/VideoShowcase';
 import { LiveDemo } from './components/LiveDemo';
+import { VoiceAssistant } from './components/VoiceAssistant';
+
 
 
 function App() {
@@ -207,7 +209,7 @@ function App() {
                     exit={{ opacity: 0, y: -10 }}
                     className="h-[calc(100vh-80px)] w-full flex flex-col items-center justify-center p-4 overflow-hidden"
                   >
-                    <div className="w-full max-w-md h-full flex flex-col justify-center">
+                    <div className="w-full max-w-lg md:max-w-2xl h-full flex flex-col justify-center">
                       <div className="glass-card rounded-[2.5rem] p-4 md:p-8 flex flex-col backdrop-blur-3xl border border-[var(--glass-border)] relative overflow-hidden shadow-2xl">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-full blur-[40px] pointer-events-none"></div>
                         <div className="absolute bottom-0 left-0 w-32 h-32 bg-primary/10 rounded-full blur-[40px] pointer-events-none"></div>
@@ -235,7 +237,7 @@ function App() {
                     exit={{ opacity: 0, y: -10 }}
                     className="h-[calc(100vh-80px)] w-full flex flex-col items-center justify-center p-4 overflow-hidden"
                   >
-                    <div className="w-full max-w-md flex flex-col items-center justify-center h-full">
+                    <div className="w-full max-w-lg md:max-w-xl flex flex-col items-center justify-center h-full">
                       {scanState === 'scanner' ? (
                         <motion.div
                           key="scanner-ui"
@@ -272,7 +274,9 @@ function App() {
                           animate={{ opacity: 1, y: 0 }}
                           className="w-full h-full max-h-full overflow-y-auto custom-scrollbar"
                         >
-                          <ScoreDisplay result={scanResult} onReset={resetScan} />
+                           <div className="w-full max-w-4xl">
+                            <ScoreDisplay result={scanResult} onReset={resetScan} />
+                          </div>
                         </motion.div>
                       )}
                     </div>
@@ -289,6 +293,19 @@ function App() {
           <Footer />
         </div>
       )}
+
+      {/* FIXED VOICE ASSISTANT */}
+      <VoiceAssistant 
+        scanResult={scanResult} 
+        isAppActive={isAppActive}
+        profile={profile}
+        onScanRequest={() => {
+          setIsAppActive(true);
+          setAppView('scanner');
+          setScanState('scanner');
+          window.scrollTo(0, 0);
+        }}
+      />
     </div>
   );
 }

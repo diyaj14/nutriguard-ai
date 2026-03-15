@@ -58,7 +58,7 @@ export function FeaturesGrid() {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.1 }}
-                            className="glass-card glass-card-hover p-10 rounded-[2.5rem] flex flex-col items-center text-center group overflow-hidden relative w-[300px] shrink-0 snap-center"
+                            className="glass-card glass-card-hover p-10 rounded-[2.5rem] flex flex-col items-center text-center group overflow-hidden relative w-[300px] shrink-0 md:w-full md:shrink snap-center"
                         >
                             <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-primary transition-colors">
                                 <f.icon className="w-8 h-8 text-primary group-hover:text-black transition-colors" />

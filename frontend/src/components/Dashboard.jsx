@@ -1,6 +1,7 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
-import { History, TrendingUp, ShieldCheck, ChevronRight, Activity, Zap } from 'lucide-react';
+import { History, TrendingUp, ShieldCheck, ChevronRight, Activity, Zap, Mic } from 'lucide-react';
+
 
 const mockData = [
     { day: 'Mon', score: 65, sodium: 80 },
@@ -30,6 +31,24 @@ export function Dashboard() {
                 <div className="glass-card p-3 rounded-2xl flex items-center gap-2 border-primary/20">
                     <Activity className="w-4 h-4 text-primary" />
                     <span className="text-primary font-bold text-sm">Vitality: 78%</span>
+                </div>
+            </div>
+
+            {/* Voice Assistant Hint */}
+            <div className="glass-card p-3 rounded-2xl flex items-center justify-between border-primary/10 bg-primary/5">
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                        <Mic className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                        <p className="text-[10px] font-bold text-primary uppercase">Voice Companion Active</p>
+                        <p className="text-[10px] text-[var(--text-secondary)]">Ask: "How is my health score today?" or "Explain my last scan"</p>
+                    </div>
+                </div>
+                <div className="flex gap-1">
+                    {[1, 2, 3].map(i => (
+                        <div key={i} className="w-0.5 h-3 bg-primary/40 rounded-full animate-pulse" style={{ animationDelay: `${i * 0.2}s` }}></div>
+                    ))}
                 </div>
             </div>
 

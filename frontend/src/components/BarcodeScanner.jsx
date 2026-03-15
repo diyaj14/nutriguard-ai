@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ScanLine, Search, Loader2, Camera } from 'lucide-react';
+import { ScanLine, Search, Loader2, Camera, Mic } from 'lucide-react';
+
 import { CameraScanner } from './CameraScanner';
 
 export function BarcodeScanner({ onScan, loading }) {
@@ -27,17 +28,19 @@ export function BarcodeScanner({ onScan, loading }) {
                     <ScanLine className="w-8 h-8 text-primary" />
                 </div>
 
-                <h2 className="text-2xl font-bold text-[var(--text-main)] mb-2 font-heading">Scan Product</h2>
-                <p className="text-[var(--text-secondary)] mb-6 text-sm">Use camera or enter barcode manually</p>
+                <h2 className="text-2xl md:text-4xl font-black text-[var(--text-main)] mb-3 font-heading tracking-tight">Identify Product</h2>
+                <p className="text-[var(--text-secondary)] mb-10 text-sm md:text-base font-medium opacity-70">Use camera visualization or enter barcode manually</p>
 
                 {/* Camera Scan Button */}
-                <button
-                    onClick={() => setShowCamera(true)}
-                    className="w-full mb-4 bg-gradient-to-r from-primary to-emerald-500 hover:from-emerald-400 hover:to-primary text-black font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 active:scale-95"
-                >
-                    <Camera className="w-5 h-5" />
-                    Scan with Camera
-                </button>
+                <div className="max-w-sm mx-auto w-full">
+                    <button
+                        onClick={() => setShowCamera(true)}
+                        className="w-full mb-6 bg-gradient-to-r from-primary to-emerald-500 hover:from-emerald-400 hover:to-primary text-black font-black py-5 rounded-2xl shadow-[0_10px_30px_rgba(22,224,160,0.3)] transition-all flex items-center justify-center gap-3 active:scale-95 text-base md:text-lg"
+                    >
+                        <Camera className="w-6 h-6" />
+                        Scan with Camera
+                    </button>
+                </div>
 
                 <div className="flex items-center gap-3 mb-4">
                     <div className="flex-1 h-px bg-[var(--glass-border)]"></div>
@@ -72,6 +75,14 @@ export function BarcodeScanner({ onScan, loading }) {
                         )}
                     </button>
                 </form>
+
+                <div className="mt-4 flex flex-col items-center gap-2">
+                    <p className="text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-widest">Or try voice control</p>
+                    <div className="flex items-center gap-2 text-primary">
+                        <Mic className="w-3 h-3 animate-pulse" />
+                        <span className="text-[10px] italic">Say "Analyze this" or "Explain the score"</span>
+                    </div>
+                </div>
 
                 <div className="mt-6 p-4 rounded-xl bg-[var(--card-bg)] border border-[var(--glass-border)] text-left">
                     <p className="text-xs text-[var(--text-secondary)] mb-2 font-bold uppercase">Quick Test Products:</p>
