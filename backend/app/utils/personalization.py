@@ -102,162 +102,272 @@ class PersonalizationEngine:
     
     def _fallback_scoring(self, product_features: dict, user_features: dict) -> Tuple[float, List[str], List[str]]:
         """
-        Rule-based fallback scoring when ML model is not available.
-        Implements the logic from mlmodel.txt
+        Two-phase scoring engine:
+        Phase 1 – Inherent Nutritional Quality (50 pts baseline):
+            Uses WHO/NHS benchmarks to evaluate sugar, salt, saturated fat,
+            calories, fiber, and protein. Produces varied scores for any product
+            even with a blank user profile (e.g. Nutella ≈ 30, plain yogurt ≈ 70).
+        Phase 2 – Personalization Modifiers (±30 pts):
+            Adjusts score based on the user's specific health conditions,
+            allergies, and fitness goals.
         """
-        score = 100.0
-        reasons = []
         warnings = []
+        reasons = []
+
+        # ──────────────────────────────────────────────────────────────
+        # PHASE 1 — INHERENT NUTRITIONAL QUALITY  (max 100 pts)
+        # ──────────────────────────────────────────────────────────────
+        # We use a sub-score approach: compute individual component scores
+        # (each 0–100), then take a weighted average.
+
+        sugar      = product_features.get('sugar_100g', 0) or 0
+        salt       = product_features.get('salt_100g', 0) or 0
+        sat_fat    = product_features.get('saturated_fat_100g', 0) or 0
+        calories   = product_features.get('energy_kcal_100g', 0) or 0
+        fiber      = product_features.get('fiber_100g', 0) or 0
+        protein    = product_features.get('protein_100g', 0) or 0
+        nova       = product_features.get('nova_group', 4) or 4
+
+        # --- Sugar score (WHO: < 5g ideal, > 22.5g high) ---
+        if sugar <= 2:       sugar_score = 100
+        elif sugar <= 5:     sugar_score = 85
+        elif sugar <= 10:    sugar_score = 65
+        elif sugar <= 15:    sugar_score = 45
+        elif sugar <= 22.5:  sugar_score = 25
+        else:                sugar_score = 5
+
+        # --- Salt score (NHS: < 0.3g = low, > 1.5g = high) ---
+        if salt <= 0.1:      salt_score = 100
+        elif salt <= 0.3:    salt_score = 85
+        elif salt <= 0.6:    salt_score = 65
+        elif salt <= 1.0:    salt_score = 40
+        elif salt <= 1.5:    salt_score = 20
+        else:                salt_score = 5
+
+        # --- Saturated fat score (NHS: < 1.5g = low, > 5g = high) ---
+        if sat_fat <= 1:     sat_fat_score = 100
+        elif sat_fat <= 2:   sat_fat_score = 80
+        elif sat_fat <= 3.5: sat_fat_score = 60
+        elif sat_fat <= 5:   sat_fat_score = 35
+        elif sat_fat <= 8:   sat_fat_score = 15
+        else:                sat_fat_score = 5
+
+        # --- Calorie score (rough guideline: < 200 low, > 500 high per 100g) ---
+        if calories <= 100:    calorie_score = 90    # very low cal (veg, water)
+        elif calories <= 200:  calorie_score = 80
+        elif calories <= 300:  calorie_score = 65
+        elif calories <= 400:  calorie_score = 50
+        elif calories <= 500:  calorie_score = 35
+        elif calories <= 600:  calorie_score = 20
+        else:                  calorie_score = 10    # very energy dense
+
+        # --- Fiber score (NHS: 30g/day target; per-100g > 3g = good) ---
+        if fiber >= 6:       fiber_score = 100
+        elif fiber >= 3:     fiber_score = 75
+        elif fiber >= 1.5:   fiber_score = 50
+        elif fiber >= 0.5:   fiber_score = 30
+        else:                fiber_score = 10
+
+        # --- Protein score (> 15g = high per 100g, < 2g = very low) ---
+        if protein >= 20:    protein_score = 100
+        elif protein >= 15:  protein_score = 85
+        elif protein >= 10:  protein_score = 70
+        elif protein >= 5:   protein_score = 55
+        elif protein >= 2:   protein_score = 40
+        else:                protein_score = 25
+
+        # --- NOVA processing penalty (applied as a multiplier) ---
+        nova_multipliers = {1: 1.0, 2: 0.95, 3: 0.88, 4: 0.78}
+        nova_mult = nova_multipliers.get(int(nova), 0.78)
+
+        # Weighted average of component scores (negatives weighted heavier)
+        # Sugar 25%, Salt 20%, SatFat 18%, Calories 15%, Fiber 12%, Protein 10%
+        base_score = (
+            sugar_score    * 0.25 +
+            salt_score     * 0.20 +
+            sat_fat_score  * 0.18 +
+            calorie_score  * 0.15 +
+            fiber_score    * 0.12 +
+            protein_score  * 0.10
+        ) * nova_mult
+
+        # Build base-level reasons
+        if nova == 4:
+            reasons.append("Ultra-processed food (NOVA Group 4) — significantly reduces base score")
+        elif nova == 3:
+            reasons.append("Processed food (NOVA Group 3) — slightly reduces nutritional quality")
+        elif nova <= 2:
+            reasons.append("Minimally processed food (NOVA Group 1-2) ✅")
+
+        if sugar > 22.5:
+            reasons.append(f"Very high sugar content — {sugar:.1f}g per 100g (WHO limit: <10g/day)")
+        elif sugar > 10:
+            reasons.append(f"High sugar content — {sugar:.1f}g per 100g")
+        elif sugar <= 5:
+            reasons.append(f"Low sugar content — {sugar:.1f}g per 100g ✅")
+
+        if salt > 1.5:
+            reasons.append(f"High salt content — {salt:.2f}g per 100g (NHS: >1.5g is high)")
+        elif salt > 0.6:
+            reasons.append(f"Moderate salt content — {salt:.2f}g per 100g")
+        elif salt <= 0.3:
+            reasons.append(f"Low salt content ✅")
+
+        if sat_fat > 5:
+            reasons.append(f"High saturated fat — {sat_fat:.1f}g per 100g")
+        elif sat_fat <= 1.5:
+            reasons.append(f"Low saturated fat ✅")
+
+        if fiber >= 3:
+            reasons.append(f"Good source of dietary fiber — {fiber:.1f}g per 100g ✅")
         
-        # --- HARD CONSTRAINTS (Safety) ---
-        if user_features['peanut_allergy'] and product_features['contains_peanut']:
-            warnings.append("⚠️ ALLERGEN ALERT: Contains peanuts - UNSAFE for you!")
-            return 0.0, ["Product contains allergen you're allergic to"], warnings
-        
-        if user_features['gluten_intolerance'] and product_features['contains_gluten']:
-            warnings.append("⚠️ ALLERGEN ALERT: Contains gluten - UNSAFE for you!")
-            return 0.0, ["Product contains allergen you're intolerant to"], warnings
-        
-        if user_features['lactose_intolerance'] and product_features['contains_milk']:
-            warnings.append("⚠️ ALLERGEN ALERT: Contains milk/lactose - UNSAFE for you!")
-            return 0.0, ["Product contains allergen you're intolerant to"], warnings
-        
-        if user_features['egg_allergy'] and product_features['contains_egg']:
-            warnings.append("⚠️ ALLERGEN ALERT: Contains egg - UNSAFE for you!")
-            return 0.0, ["Product contains allergen you're allergic to"], warnings
-        
-        # --- SOFT PENALTIES (Health Conditions) ---
-        
-        # Hypertension: Penalize high salt
-        if user_features['has_hypertension']:
-            if product_features['salt_100g'] > 1.5:
-                score -= 40
-                reasons.append("High salt content (not suitable for hypertension)")
-            elif product_features['salt_100g'] > 0.5:
-                score -= 20
-                reasons.append("Moderate salt content (caution with hypertension)")
-        
-        # Diabetes: Penalize high sugar
-        if user_features['has_diabetes']:
-            if product_features['sugar_100g'] > 22.5:
-                score -= 50
-                reasons.append("Very high sugar content (not suitable for diabetes)")
-            elif product_features['sugar_100g'] > 5.0:
-                score -= 25
-                reasons.append("Moderate sugar content (caution with diabetes)")
-        
-        # High Cholesterol: Penalize Saturated Fat
-        if user_features['has_high_cholesterol']:
-            if product_features['saturated_fat_100g'] > 5.0:
-                score -= 30
-                reasons.append("High saturated fat (not suitable for high cholesterol)")
-        
-        # --- GOALS (Fitness) ---
-        
-        # Weight Loss: Penalize high calories & sugar
-        if user_features['goal_weight_loss']:
-            if product_features['energy_kcal_100g'] > 400:
-                score -= 20
-                reasons.append("High calorie content (not ideal for weight loss)")
-            if product_features['sugar_100g'] > 15:
-                score -= 15
-                reasons.append("High sugar content (not ideal for weight loss)")
-        
-        # Muscle Gain: Reward/penalize protein
-        if user_features['goal_muscle_gain']:
-            if product_features['protein_100g'] > 20:
-                score += 10
-                reasons.append("Excellent protein content (great for muscle gain)")
-            elif product_features['protein_100g'] < 5:
-                score -= 10
-                reasons.append("Low protein content (not ideal for muscle gain)")
-        
-        # --- GENERAL HEALTH (Base Penalties) ---
-        if product_features['nova_group'] == 4:
-            score -= 15
-            reasons.append("Ultra-processed food (NOVA Group 4)")
-        elif product_features['nova_group'] == 3:
-            score -= 5
-            reasons.append("Processed food (NOVA Group 3)")
-        
-        # Ensure score is in valid range
-        score = max(0.0, min(100.0, score))
-        
+        if protein >= 15:
+            reasons.append(f"High protein content — {protein:.1f}g per 100g ✅")
+
+        # ──────────────────────────────────────────────────────────────
+        # PHASE 2 — PERSONALISATION MODIFIERS  (±30 pts max)
+        # ──────────────────────────────────────────────────────────────
+        modifier = 0.0
+
+        # --- Hard constraints: Allergens → score to 0 immediately ---
+        if user_features.get('peanut_allergy') and product_features.get('contains_peanut'):
+            warnings.append("⚠️ ALLERGEN ALERT: Contains peanuts — UNSAFE for you!")
+            return 0.0, ["Product contains an allergen you're allergic to (peanut)"], warnings
+
+        if user_features.get('gluten_intolerance') and product_features.get('contains_gluten'):
+            warnings.append("⚠️ ALLERGEN ALERT: Contains gluten — UNSAFE for you!")
+            return 0.0, ["Product contains an ingredient you're intolerant to (gluten)"], warnings
+
+        if user_features.get('lactose_intolerance') and product_features.get('contains_milk'):
+            warnings.append("⚠️ ALLERGEN ALERT: Contains milk/lactose — UNSAFE for you!")
+            return 0.0, ["Product contains an ingredient you're intolerant to (lactose/milk)"], warnings
+
+        if user_features.get('egg_allergy') and product_features.get('contains_egg'):
+            warnings.append("⚠️ ALLERGEN ALERT: Contains egg — UNSAFE for you!")
+            return 0.0, ["Product contains an allergen you're allergic to (egg)"], warnings
+
+        # --- Hypertension: extra penalty for high salt ---
+        if user_features.get('has_hypertension'):
+            if salt > 1.5:
+                modifier -= 20
+                reasons.append("⚠️ Very high salt — especially risky with hypertension")
+            elif salt > 0.6:
+                modifier -= 10
+                reasons.append("Moderate salt — consume in moderation with hypertension")
+            elif salt <= 0.3:
+                modifier += 5
+                reasons.append("Low salt — good choice for hypertension ✅")
+
+        # --- Diabetes: extra penalty for high sugar, bonus for low ---
+        if user_features.get('has_diabetes'):
+            if sugar > 22.5:
+                modifier -= 25
+                reasons.append("⚠️ Very high sugar — not safe with diabetes")
+            elif sugar > 10:
+                modifier -= 15
+                reasons.append("High sugar — limit consumption with diabetes")
+            elif sugar <= 5:
+                modifier += 5
+                reasons.append("Low sugar — suitable for diabetes management ✅")
+
+        # --- High Cholesterol: extra penalty for saturated fat ---
+        if user_features.get('has_high_cholesterol'):
+            if sat_fat > 5:
+                modifier -= 15
+                reasons.append("⚠️ High saturated fat — avoid with high cholesterol")
+            elif sat_fat > 3:
+                modifier -= 8
+                reasons.append("Moderate saturated fat — limit with high cholesterol")
+            elif sat_fat <= 1.5:
+                modifier += 5
+                reasons.append("Low saturated fat — heart-friendly ✅")
+
+        # --- Weight Loss goal ---
+        if user_features.get('goal_weight_loss'):
+            if calories > 450 and sugar > 15:
+                modifier -= 12
+                reasons.append("High calorie + sugar combo — not ideal for weight loss")
+            elif calories <= 200 and sugar <= 5:
+                modifier += 8
+                reasons.append("Low calorie and low sugar — great for weight loss ✅")
+
+        # --- Muscle Gain goal ---
+        if user_features.get('goal_muscle_gain'):
+            if protein >= 20:
+                modifier += 12
+                reasons.append(f"Excellent protein — {protein:.1f}g/100g, great for muscle gain ✅")
+            elif protein >= 10:
+                modifier += 5
+                reasons.append(f"Good protein content — {protein:.1f}g/100g")
+            elif protein < 3:
+                modifier -= 8
+                reasons.append(f"Very low protein — {protein:.1f}g/100g, poor for muscle gain")
+
+        # --- High Protein goal ---
+        if user_features.get('goal_high_protein'):
+            if protein >= 15:
+                modifier += 8
+                reasons.append(f"High protein — meets your high protein goal ✅")
+            elif protein < 5:
+                modifier -= 8
+                reasons.append(f"Low protein — doesn't meet your high protein goal")
+
+        # --- Low Carb goal ---
+        if user_features.get('goal_low_carb'):
+            if sugar > 15:
+                modifier -= 10
+                reasons.append(f"High sugar/carbs — not suitable for low carb diet")
+            elif sugar <= 5:
+                modifier += 8
+                reasons.append(f"Low carb-friendly product ✅")
+
+        # Clamp modifier to ±30
+        modifier = max(-30.0, min(30.0, modifier))
+
+        final_score = base_score + modifier
+        final_score = max(0.0, min(100.0, final_score))
+
         if not reasons:
-            reasons.append("Product is generally suitable for your profile")
-        
-        return score, reasons, warnings
-    
+            reasons.append("Product is in a decent nutritional range for your profile")
+
+        return round(final_score, 1), reasons, warnings
+
     def predict(self, product_data: dict, user_profile: dict) -> Tuple[float, List[str], List[str]]:
         """
         Predict suitability score for a product given a user profile.
-        
+
         Returns:
             Tuple of (score, reasons, warnings)
         """
         # Map to model features
         product_features = self._map_product_to_features(product_data)
         user_features = self._map_user_to_features(user_profile)
-        
-        # If model is available, use it
+
+        # If ML model is available, use it — but always run our fallback for explanations
         if self.model:
             try:
-                # Combine features into single row
                 combined = {**product_features, **user_features}
-                
-                # Create feature array in correct order (no pandas needed!)
                 feature_values = [combined.get(feat, 0) for feat in self.FEATURE_ORDER]
                 input_array = np.array([feature_values])
-                
-                # Predict
-                score = self.model.predict(input_array)[0]
-                
-                # Generate explanations (basic version - can be enhanced)
-                reasons, warnings = self._generate_explanations(product_features, user_features, score)
-                
-                return float(score), reasons, warnings
-                
+                ml_score = float(self.model.predict(input_array)[0])
+
+                # Use the new rule-based engine for rich explanations
+                # ML provides the score, rule-based provides the reasons
+                _, reasons, warnings = self._fallback_scoring(product_features, user_features)
+                ml_score_clamped = round(min(100.0, max(0.0, ml_score)), 1)
+                return ml_score_clamped, reasons, warnings
+
             except Exception as e:
-                print(f"⚠️ Model prediction failed: {e}. Using fallback scoring.")
-                return self._fallback_scoring(product_features, user_features)
-        else:
-            # Use rule-based fallback
-            return self._fallback_scoring(product_features, user_features)
-    
+                print(f"⚠️ Model prediction failed: {e}. Using rule-based scoring.")
+
+        # Primary path: use full rule-based engine
+        return self._fallback_scoring(product_features, user_features)
+
     def _generate_explanations(self, product_features: dict, user_features: dict, score: float) -> Tuple[List[str], List[str]]:
-        """Generate human-readable explanations for the score."""
-        reasons = []
-        warnings = []
-        
-        # Check allergens first
-        allergen_map = {
-            ('peanut_allergy', 'contains_peanut', 'peanuts'),
-            ('gluten_intolerance', 'contains_gluten', 'gluten'),
-            ('lactose_intolerance', 'contains_milk', 'milk/lactose'),
-            ('egg_allergy', 'contains_egg', 'egg'),
-        }
-        
-        for user_key, product_key, name in allergen_map:
-            if user_features.get(user_key) and product_features.get(product_key):
-                warnings.append(f"⚠️ ALLERGEN ALERT: Contains {name}")
-        
-        # Score-based explanations
-        if score >= 80:
-            reasons.append("Excellent match for your health profile")
-        elif score >= 60:
-            reasons.append("Good match with minor concerns")
-        elif score >= 40:
-            reasons.append("Moderate suitability - consume with caution")
-        else:
-            reasons.append("Not recommended for your health profile")
-        
-        # Specific nutritional insights
-        if product_features['sugar_100g'] > 20:
-            reasons.append(f"High sugar content ({product_features['sugar_100g']}g per 100g)")
-        if product_features['salt_100g'] > 1.0:
-            reasons.append(f"High salt content ({product_features['salt_100g']}g per 100g)")
-        
+        """Delegate to the new unified scoring engine for explanations."""
+        _, reasons, warnings = self._fallback_scoring(product_features, user_features)
         return reasons, warnings
+
 
     def get_recommendations(self, current_product_data: dict, current_score: float, user_profile: dict) -> List[dict]:
         """
