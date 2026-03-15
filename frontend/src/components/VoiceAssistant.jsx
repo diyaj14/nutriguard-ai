@@ -86,8 +86,17 @@ export function VoiceAssistant({ scanResult, onScanRequest, profile, isAppActive
             if (!scanResult || !scanResult.recommendations || scanResult.recommendations.length === 0) {
                 speak("I don't have enough data to suggest alternatives right now.");
             } else {
-                const recs = scanResult.recommendations.map(r => r.name).join(", ");
-                speak(`Based on your profile, better alternatives would be: ${recs}. They have higher suitability scores.`);
+                const bestRec = scanResult.recommendations[0];
+                const recNames = scanResult.recommendations.map(r => r.name).join(", ");
+                let responseText = `Based on your profile, I found better alternatives: ${recNames}. `;
+                
+                if (bestRec.reason) {
+                    responseText += `For instance, ${bestRec.name} is a great choice because it is ${bestRec.reason.toLowerCase()}.`;
+                } else {
+                    responseText += `These products have higher suitability scores for your health goals.`;
+                }
+                
+                speak(responseText);
             }
         }
         else if (cmd.includes('analyze') || cmd.includes('scan')) {

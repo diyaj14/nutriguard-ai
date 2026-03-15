@@ -125,3 +125,40 @@ def resolve_by_barcode(barcode: str) -> Optional[ProductResponse]:
     # If all domains and retries failed
     print(f"❌ Failed to fetch product after trying all domains")
     return None
+
+def resolve_by_category(category_tag: str, limit: int = 8) -> List[Dict]:
+    """
+    Searches for products in a specific category tag.
+    Used for finding alternatives.
+    """
+    url = f"https://world.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&tag_0={category_tag}&sort_by=unique_scans_n&page_size={limit}&json=true"
+    
+    try:
+        print(f"🔍 Searching for alternatives in category: {category_tag}")
+        response = requests.get(url, timeout=10)
+        if response.status_code != 200:
+            return []
+            
+        data = response.json()
+        products = data.get('products', [])
+        
+        results = []
+        for p in products:
+            # Basic normalization for processing
+            nutrients = p.get('nutriments', {})
+            nutrition = normalize_nutrition(nutrients)
+            
+            results.append({
+                'product_id': p.get('code'),
+                'name': p.get('product_name') or p.get('product_name_en') or 'Unknown',
+                'image_url': p.get('image_front_url'),
+                'nova_group': p.get('nova_group'),
+                'categories_tags': p.get('categories_tags', []),
+                'allergens_tags': p.get('allergens_tags', []),
+                'traces_tags': p.get('traces_tags', []),
+                **nutrition # Spread normalized nutrition
+            })
+        return results
+    except Exception as e:
+        print(f"❌ Error searching by category: {e}")
+        return []

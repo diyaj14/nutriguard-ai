@@ -55,6 +55,7 @@ class AlternativeProduct(BaseModel):
     suitability_score: float
     improvement_score: float  # How much better it is than current product
     image_url: Optional[str] = None
+    reason: Optional[str] = None  # Why this is a better alternative
 
 class AdditiveDetail(BaseModel):
     """Detailed info about a food additive"""

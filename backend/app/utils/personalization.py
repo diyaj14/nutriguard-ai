@@ -261,56 +261,77 @@ class PersonalizationEngine:
 
     def get_recommendations(self, current_product_data: dict, current_score: float, user_profile: dict) -> List[dict]:
         """
-        Find healthier alternatives to the current product.
-        In a production app, this would query the database/API.
-        For this demo, we use a curated list of 'known healthy' alternatives.
+        Find healthier alternatives to the current product by searching OpenFoodFacts.
         """
-        # Curated healthy alternatives by category
-        HEALTHY_LIBRARY = {
-            'Snack': [
-                {'name': 'Roasted Makhanas (Fox Nuts)', 'product_id': 'makhana01', 'energy_kcal_100g': 350, 'sugars_100g': 0.5, 'salt_100g': 0.2, 'proteins_100g': 9.0, 'fat_100g': 0.1, 'saturated_fat_100g': 0, 'nova_group': 1, 'image_url': 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&q=80&w=200'},
-                {'name': 'Mixed Roasted Nuts', 'product_id': 'nuts02', 'energy_kcal_100g': 600, 'sugars_100g': 4.0, 'salt_100g': 0.1, 'proteins_100g': 20.0, 'fat_100g': 50.0, 'saturated_fat_100g': 7, 'nova_group': 2, 'image_url': 'https://images.unsplash.com/photo-1596591606975-97ee5cef3a1e?auto=format&fit=crop&q=80&w=200'},
-                {'name': 'Fruit & Nut Energy Bar (No Sugar)', 'product_id': 'bar03', 'energy_kcal_100g': 380, 'sugars_100g': 12.0, 'salt_100g': 0.05, 'proteins_100g': 8.0, 'fat_100g': 15.0, 'saturated_fat_100g': 2, 'nova_group': 3, 'image_url': 'https://images.unsplash.com/photo-1590301157890-4810ed352733?auto=format&fit=crop&q=80&w=200'}
-            ],
-            'Beverage': [
-                {'name': 'Unsweetened Green Tea', 'product_id': 'tea01', 'energy_kcal_100g': 2, 'sugars_100g': 0, 'salt_100g': 0, 'proteins_100g': 0, 'fat_100g': 0, 'saturated_fat_100g': 0, 'nova_group': 1, 'image_url': 'https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?auto=format&fit=crop&q=80&w=200'},
-                {'name': 'Sparkling Water with Lemon', 'product_id': 'water02', 'energy_kcal_100g': 0, 'sugars_100g': 0, 'salt_100g': 0, 'proteins_100g': 0, 'fat_100g': 0, 'saturated_fat_100g': 0, 'nova_group': 1, 'image_url': 'https://images.unsplash.com/photo-1551028150-64b9f398f678?auto=format&fit=crop&q=80&w=200'},
-                {'name': 'Fresh Coconut Water', 'product_id': 'coconut03', 'energy_kcal_100g': 19, 'sugars_100g': 3.7, 'salt_100g': 0.1, 'proteins_100g': 0.7, 'fat_100g': 0.2, 'saturated_fat_100g': 0, 'nova_group': 1, 'image_url': 'https://images.unsplash.com/photo-1523675322749-163414005489?auto=format&fit=crop&q=80&w=200'}
-            ],
-            'Dairy': [
-                {'name': 'Greek Style Low Fat Yogurt', 'product_id': 'yogurt01', 'energy_kcal_100g': 59, 'sugars_100g': 3.2, 'salt_100g': 0.1, 'proteins_100g': 10.0, 'fat_100g': 2.0, 'saturated_fat_100g': 1.2, 'nova_group': 3, 'image_url': 'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&q=80&w=200'},
-                {'name': 'Unsweetened Almond Milk', 'product_id': 'almond02', 'energy_kcal_100g': 13, 'sugars_100g': 0.1, 'salt_100g': 0.1, 'proteins_100g': 0.5, 'fat_100g': 1.1, 'saturated_fat_100g': 0.1, 'nova_group': 3, 'image_url': 'https://images.unsplash.com/photo-1550583724-125581fd2ffb?auto=format&fit=crop&q=80&w=200'}
-            ]
-        }
+        # --- 1. Identify category for search ---
+        cat_tags = current_product_data.get('categories_tags', [])
+        # Find the most specific category (usually longer strings or further down the list)
+        # Filter for useful categories (avoid generic ones like 'en:food')
+        search_cat = "en:snacks" # Default fallback
         
-        # Get category of current product
-        current_features = self._map_product_to_features(current_product_data)
-        category = current_features.get('category', 'Snack')
+        useful_cats = [c for c in cat_tags if not c.startswith('en:label') and len(c) > 5 and ':' in c]
+        if useful_cats:
+            # Pick the 2nd to last or last tag for better specificity
+            search_cat = useful_cats[-1]
+            
+        # --- 2. Fetch candidates ---
+        from ..resolvers.barcode_resolver import resolve_by_category
+        candidates = resolve_by_category(search_cat, limit=12)
         
-        # Get candidates for this category (fallback to Snack)
-        candidates = HEALTHY_LIBRARY.get(category, HEALTHY_LIBRARY['Snack'])
-        
+        # --- 3. Add fallbacks from library if search returns few results ---
+        if len(candidates) < 3:
+            current_category_type = self._map_product_to_features(current_product_data).get('category', 'Snack')
+            HEALTHY_LIBRARY = {
+                'Snack': [
+                    {'name': 'Roasted Makhanas', 'product_id': 'makhana01', 'energy_kcal_100g': 350, 'sugars_100g': 0.5, 'salt_100g': 0.2, 'proteins_100g': 9.0, 'fat_100g': 0.1, 'saturated_fat_100g': 0, 'nova_group': 1, 'image_url': 'https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&q=80&w=200'},
+                    {'name': 'Mixed Roasted Nuts', 'product_id': 'nuts02', 'energy_kcal_100g': 600, 'sugars_100g': 4.0, 'salt_100g': 0.1, 'proteins_100g': 20.0, 'fat_100g': 50.0, 'saturated_fat_100g': 7, 'nova_group': 2, 'image_url': 'https://images.unsplash.com/photo-1596591606975-97ee5cef3a1e?auto=format&fit=crop&q=80&w=200'}
+                ],
+                'Beverage': [
+                    {'name': 'Unsweetened Green Tea', 'product_id': 'tea01', 'energy_kcal_100g': 2, 'sugars_100g': 0, 'salt_100g': 0, 'proteins_100g': 0, 'fat_100g': 0, 'saturated_fat_100g': 0, 'nova_group': 1, 'image_url': 'https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?auto=format&fit=crop&q=80&w=200'},
+                    {'name': 'Fresh Coconut Water', 'product_id': 'coconut03', 'energy_kcal_100g': 19, 'sugars_100g': 3.7, 'salt_100g': 0.1, 'proteins_100g': 0.7, 'fat_100g': 0.2, 'saturated_fat_100g': 0, 'nova_group': 1, 'image_url': 'https://images.unsplash.com/photo-1523675322749-163414005489?auto=format&fit=crop&q=80&w=200'}
+                ]
+            }
+            candidates.extend(HEALTHY_LIBRARY.get(current_category_type, HEALTHY_LIBRARY['Snack']))
+
+        # --- 4. Score and Filter ---
         recommendations = []
+        seen_ids = {current_product_data.get('product_id'), current_product_data.get('code')}
+        
         for candidate in candidates:
-            # Skip if it's the same product (by name or ID)
-            if candidate['product_id'] == current_product_data.get('product_id') or \
-               candidate['name'].lower() == current_product_data.get('name', '').lower():
+            pid = candidate.get('product_id') or candidate.get('code')
+            if pid in seen_ids:
                 continue
-                
-            # Score the candidate for this user
+            seen_ids.add(pid)
+            
+            # Score candidate
             score, _, _ = self.predict(candidate, user_profile)
             
-            # Only recommend if it's better than current score
-            if score > current_score:
+            # Only recommend if it's better by at least 10 points or it's a "good" product (>70)
+            if score > current_score + 5 or (score > 75 and current_score < 75):
+                # Generate a simple improvement reason
+                improvement_reason = ""
+                curr_sugar = current_product_data.get('sugars_100g', 0)
+                cand_sugar = candidate.get('sugars_100g', 0)
+                
+                if cand_sugar < curr_sugar * 0.7:
+                    improvement_reason = f"Significantly lower in sugar ({cand_sugar}g vs {curr_sugar}g)"
+                elif candidate.get('nova_group', 4) < current_product_data.get('nova_group', 4):
+                    improvement_reason = "Less processed (lower NOVA group)"
+                elif candidate.get('proteins_100g', 0) > current_product_data.get('proteins_100g', 0) + 5:
+                    improvement_reason = "Higher in protein"
+                else:
+                    improvement_reason = "Better overall nutritional balance for your profile"
+
                 recommendations.append({
                     'name': candidate['name'],
-                    'product_id': candidate['product_id'],
+                    'product_id': str(pid),
                     'suitability_score': round(score, 1),
                     'improvement_score': round(score - current_score, 1),
-                    'image_url': candidate.get('image_url')
+                    'image_url': candidate.get('image_url'),
+                    'reason': improvement_reason
                 })
         
-        # Return top 3 recommendations sorted by score
+        # Sort by score and take top 3
         return sorted(recommendations, key=lambda x: x['suitability_score'], reverse=True)[:3]
 
     def get_additive_details(self, additive_ids: List[str]) -> List[dict]:

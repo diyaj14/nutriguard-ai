@@ -104,7 +104,10 @@ export function ScoreDisplay({ result, onReset }) {
                                             )}
                                         </div>
                                         <div className="ml-4 flex-1">
-                                            <h4 className="text-sm font-black text-[var(--text-main)] group-hover:text-primary transition-colors leading-tight mb-2">{rec.name}</h4>
+                                            <h4 className="text-sm font-black text-[var(--text-main)] group-hover:text-primary transition-colors leading-tight mb-1">{rec.name}</h4>
+                                            {rec.reason && (
+                                                <p className="text-[10px] text-[var(--text-secondary)] italic mb-2 line-clamp-1">{rec.reason}</p>
+                                            )}
                                             <div className="flex items-center">
                                                 <div className="flex items-center text-primary font-black mr-4">
                                                     <span className="text-xs px-2 py-0.5 rounded-lg bg-primary/20 mr-2 border border-primary/20">{Math.round(rec.suitability_score)}</span>
