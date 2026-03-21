@@ -65,14 +65,14 @@ export function Stats() {
                     </motion.h2>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-4 lg:gap-8">
+                <div className="flex overflow-x-auto pb-8 gap-6 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-4 lg:gap-8 snap-x snap-mandatory scroll-smooth no-scrollbar px-4 -mx-4 md:px-0 md:mx-0">
                     {stats.map((stat, idx) => (
                         <motion.div
                             key={idx}
                             initial={{ opacity: 0, y: 10 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx * 0.1 }}
-                            className="glass-card hover:bg-white/5 transition-all p-8 md:p-6 lg:p-8 rounded-[2.5rem] flex flex-col items-center justify-center text-center group relative overflow-hidden w-full h-full"
+                            className="glass-card hover:bg-white/5 transition-all p-8 md:p-6 lg:p-8 rounded-[2.5rem] flex flex-col items-center justify-center text-center group relative overflow-hidden w-[280px] shrink-0 md:w-full md:shrink snap-center h-full"
                         >
                             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             <Counter value={stat.value} />
