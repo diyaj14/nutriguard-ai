@@ -108,9 +108,9 @@ export const BusinessPlan = () => {
                 </p>
             </div>
 
-            <div className="flex overflow-x-auto pb-12 gap-8 md:grid md:grid-cols-3 md:gap-8 snap-x snap-mandatory scroll-smooth no-scrollbar px-4 -mx-4">
+            <div className="flex overflow-x-auto pb-12 gap-8 md:grid md:grid-cols-3 md:gap-8 snap-x snap-mandatory scroll-smooth no-scrollbar px-4 -mx-4 md:px-0 md:mx-0">
                 {plans.map((plan, idx) => (
-                    <div key={idx} className="w-[300px] snap-center shrink-0">
+                    <div key={idx} className="w-[300px] md:w-full snap-center shrink-0 md:shrink">
                         <PlanCard {...plan} />
                     </div>
                 ))}

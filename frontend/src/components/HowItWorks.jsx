@@ -32,15 +32,15 @@ const steps = [
 export function HowItWorks() {
     return (
         <section id="how-it-works" className="py-24 bg-transparent relative">
-            <div className="max-w-7xl mx-auto px-6">
-                <div className="flex overflow-x-auto pb-8 gap-6 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-8 snap-x snap-mandatory scroll-smooth no-scrollbar">
+            <div className="w-full px-6 md:px-12 lg:px-20">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-4 lg:gap-8">
                     {steps.map((step, idx) => (
                         <motion.div
                             key={idx}
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx * 0.1 }}
-                            className="glass-card glass-card-hover p-10 rounded-[2.5rem] flex flex-col items-center text-center gap-8 group w-[300px] shrink-0 md:w-full md:shrink snap-center"
+                            className="glass-card glass-card-hover p-6 lg:p-8 rounded-[2.5rem] flex flex-col items-center text-center gap-6 group w-full h-full"
                         >
                              <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
                                 <step.icon className="w-10 h-10 text-primary group-hover:text-black transition-colors" />

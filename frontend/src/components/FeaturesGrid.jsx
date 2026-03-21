@@ -51,14 +51,14 @@ export function FeaturesGrid() {
                     </motion.h2>
                 </div>
 
-                <div className="flex overflow-x-auto pb-8 gap-6 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 snap-x snap-mandatory scroll-smooth no-scrollbar">
+                <div className="flex overflow-x-auto pb-8 gap-6 md:flex-wrap md:justify-center md:gap-6 snap-x snap-mandatory scroll-smooth no-scrollbar px-4 -mx-4 md:px-0 md:mx-0">
                     {features.map((f, i) => (
                         <motion.div
                             key={i}
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.1 }}
-                            className="glass-card glass-card-hover p-10 rounded-[2.5rem] flex flex-col items-center text-center group overflow-hidden relative w-[300px] shrink-0 md:w-full md:shrink snap-center"
+                            className="glass-card glass-card-hover p-8 md:p-10 rounded-[2.5rem] flex flex-col items-center text-center group overflow-hidden relative w-[300px] shrink-0 md:w-[calc(50%-1.5rem)] lg:w-[calc(33.333%-1rem)] snap-center"
                         >
                             <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-primary transition-colors">
                                 <f.icon className="w-8 h-8 text-primary group-hover:text-black transition-colors" />

@@ -1,5 +1,40 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef } from 'react';
+import { motion, useSpring, useTransform, useInView } from 'framer-motion';
+
+function Counter({ value, sub = "" }) {
+    const ref = useRef(null);
+    const isInView = useInView(ref, { once: true, amount: 0.5 });
+    
+    // Extract base number and suffix (e.g., "10M+", "%", "<2s")
+    const numericPart = parseFloat(value.replace(/[^0-9.]/g, '')) || 0;
+    const suffix = value.replace(/[0-9.]/g, '');
+    const isPrefix = value.startsWith('<');
+    const cleanSuffix = isPrefix ? suffix.replace('<', '') : suffix;
+
+    const spring = useSpring(0, {
+        stiffness: 80,
+        damping: 30,
+        duration: 2
+    });
+
+    const displayValue = useTransform(spring, (current) => {
+        const rounded = Math.floor(current);
+        if (isPrefix) return `<${rounded}${cleanSuffix}`;
+        return `${rounded}${cleanSuffix}`;
+    });
+
+    useEffect(() => {
+        if (isInView) {
+            spring.set(numericPart);
+        }
+    }, [isInView, numericPart, spring]);
+
+    return (
+        <motion.div ref={ref} className="text-4xl xs:text-5xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-primary mb-6 tracking-tighter drop-shadow-[0_0_15px_rgba(16,185,129,0.3)] duration-500">
+            {displayValue}
+        </motion.div>
+    );
+}
 
 const stats = [
     { label: 'Accuracy Rate', value: '98%', sub: 'in nutritional matching' },
@@ -11,7 +46,7 @@ const stats = [
 export function Stats() {
     return (
         <section className="py-24 bg-transparent relative overflow-hidden">
-            <div className="max-w-7xl mx-auto px-6 relative z-10">
+            <div className="w-full px-6 md:px-12 lg:px-20 relative z-10">
                 <div className="text-center mb-20">
                     <motion.span
                         initial={{ opacity: 0, y: 10 }}
@@ -30,19 +65,17 @@ export function Stats() {
                     </motion.h2>
                 </div>
 
-                <div className="flex overflow-x-auto pb-8 gap-6 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-8 snap-x snap-mandatory scroll-smooth no-scrollbar">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-4 lg:gap-8">
                     {stats.map((stat, idx) => (
                         <motion.div
                             key={idx}
                             initial={{ opacity: 0, y: 10 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx * 0.1 }}
-                            className="glass-card hover:bg-white/5 transition-all p-10 rounded-[2.5rem] flex flex-col items-center justify-center text-center group relative overflow-hidden w-[300px] shrink-0 md:w-full md:shrink snap-center"
+                            className="glass-card hover:bg-white/5 transition-all p-8 md:p-6 lg:p-8 rounded-[2.5rem] flex flex-col items-center justify-center text-center group relative overflow-hidden w-full h-full"
                         >
                             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                            <div className="text-4xl xs:text-5xl sm:text-7xl font-black text-primary mb-6 tracking-tighter drop-shadow-[0_0_15px_rgba(16,185,129,0.3)] duration-500">
-                                {stat.value}
-                            </div>
+                            <Counter value={stat.value} />
                             <div className="text-xl font-black text-[var(--text-main)] mb-2 tracking-tight group-hover:text-primary transition-colors">
                                 {stat.label}
                             </div>

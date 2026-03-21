@@ -174,13 +174,13 @@ function App() {
             
                {/* VIDEO SHOWCASE SECTION */}
               <VideoShowcase />
-
+ {/* HOW IT WORKS SECTION */}
+              <HowItWorks />
 
               {/* STATS SECTION */}
               <Stats />
 
-              {/* HOW IT WORKS SECTION */}
-              <HowItWorks />
+             
 
               {/* FEATURES SECTION */}
               <FeaturesGrid />
