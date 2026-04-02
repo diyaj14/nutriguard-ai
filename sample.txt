@@ -1,0 +1,5 @@
+“Create a proper web dashboard layout for tailored
+ for the core working prototype. The dashboard must include a collapsible left-hand 
+ navigation menu, a main content area with [number] key metric cards, a data visualization chart
+  showing [data type], and a detailed table displaying [data]. Adhere to a modular, 
+card-based layout that is easy to scan, using a professional color scheme.”
