@@ -1,7 +1,7 @@
 import requests
 from ..models.schemas import ProductResponse, NutritionInfo
 from ..utils.normalizer import normalize_nutrition, normalize_ingredients, extract_additives
-from typing import Optional
+from typing import Optional, List, Dict
 import time
 
 def resolve_by_barcode(barcode: str) -> Optional[ProductResponse]:
@@ -87,7 +87,14 @@ def resolve_by_barcode(barcode: str) -> Optional[ProductResponse]:
                 print(f"🔢 Barcode: {barcode}")
                 print(f"🥗 Ingredients: {len(ingredients)} found")
                 print(f"📊 Nutrition data: {len([k for k, v in nutrition.items() if v is not None])} fields")
-                
+
+                # Extract NOVA group (food processing level 1-4)
+                raw_nova = product.get('nova_group')
+                try:
+                    nova_group = int(raw_nova) if raw_nova is not None else None
+                except (ValueError, TypeError):
+                    nova_group = None
+
                 return ProductResponse(
                     product_id=product.get('code', barcode),
                     name=product_name,
@@ -95,7 +102,11 @@ def resolve_by_barcode(barcode: str) -> Optional[ProductResponse]:
                     nutrition=NutritionInfo(**nutrition),
                     additives=additives,
                     data_sources=sources,
-                    image_url=image_url
+                    image_url=image_url,
+                    nova_group=nova_group,
+                    allergens_tags=product.get('allergens_tags', []),
+                    traces_tags=product.get('traces_tags', []),
+                    categories_tags=product.get('categories_tags', []),
                 )
                 
             except requests.exceptions.Timeout:

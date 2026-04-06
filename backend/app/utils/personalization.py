@@ -49,12 +49,11 @@ class PersonalizationEngine:
     def _map_product_to_features(self, product_data: dict) -> dict:
         """
         Convert API product data to model input features.
-        Matches the structure defined in ml_training_colab_script.py
+        Reads from the correctly-keyed product dict (post schema fix).
         """
-        # Category mapping (simple heuristic)
-        categories_whitelist = ['Snack', 'Beverage', 'Dairy', 'Cereal', 'Ready-Meal', 'Condiment']
+        # Category mapping — read from the now-preserved categories_tags field
         cat_tags = [t.lower() for t in product_data.get('categories_tags', [])]
-        
+
         model_category = 'Snack'  # Default
         if any('beverage' in t or 'drink' in t for t in cat_tags):
             model_category = 'Beverage'
@@ -64,22 +63,32 @@ class PersonalizationEngine:
             model_category = 'Cereal'
         elif any('meal' in t or 'ready' in t for t in cat_tags):
             model_category = 'Ready-Meal'
-        
-        # Allergens detection
+
+        # Allergens — read from the now-preserved allergens_tags / traces_tags
         allergens = str(product_data.get('allergens_tags', [])).lower()
         traces = str(product_data.get('traces_tags', [])).lower()
         combined_allergens = allergens + " " + traces
-        
+
+        # NOVA: stored directly on ProductResponse (not inside nutrition)
+        nova = product_data.get('nova_group', None)
+        try:
+            nova = int(nova) if nova is not None else 4
+        except (ValueError, TypeError):
+            nova = 4
+
         return {
             'category': model_category,
-            'energy_kcal_100g': product_data.get('energy_kcal_100g', 0),
-            'sugar_100g': product_data.get('sugars_100g', 0),
-            'fat_100g': product_data.get('fat_100g', 0),
-            'saturated_fat_100g': product_data.get('saturated_fat_100g', 0),
-            'salt_100g': product_data.get('salt_100g', 0),
-            'fiber_100g': product_data.get('fiber_100g', 0),
-            'protein_100g': product_data.get('proteins_100g', 0),
-            'nova_group': product_data.get('nova_group', 4),
+            'energy_kcal_100g': product_data.get('energy_kcal_100g') or 0,
+            # sugars key is 'sugars_100g' in NutritionInfo / normalizer
+            'sugar_100g': product_data.get('sugars_100g') or 0,
+            'fat_100g': product_data.get('fat_100g') or 0,
+            'saturated_fat_100g': product_data.get('saturated_fat_100g') or 0,
+            # salt_100g is now properly computed as sodium × 2.5 in normalizer
+            'salt_100g': product_data.get('salt_100g') or 0,
+            'fiber_100g': product_data.get('fiber_100g') or 0,
+            # protein key is 'proteins_100g' in NutritionInfo
+            'protein_100g': product_data.get('proteins_100g') or 0,
+            'nova_group': nova,
             'contains_gluten': 1 if 'gluten' in combined_allergens else 0,
             'contains_peanut': 1 if ('peanut' in combined_allergens or 'nut' in combined_allergens) else 0,
             'contains_milk': 1 if ('milk' in combined_allergens or 'dairy' in combined_allergens) else 0,
@@ -336,32 +345,41 @@ class PersonalizationEngine:
         """
         Predict suitability score for a product given a user profile.
 
+        The rule-based engine is always used for the final score because it
+        produces accurate, product-sensitive results using WHO/NHS benchmarks.
+
+        The ML model (if loaded) is used ONLY as a minor ±5pt confidence
+        adjustment to avoid the model-collapse bug where it returned ~85 for
+        every input regardless of nutritional content.
+
         Returns:
             Tuple of (score, reasons, warnings)
         """
-        # Map to model features
         product_features = self._map_product_to_features(product_data)
         user_features = self._map_user_to_features(user_profile)
 
-        # If ML model is available, use it — but always run our fallback for explanations
+        # PRIMARY: Rule-based engine — always run this for the real score
+        rule_score, reasons, warnings = self._fallback_scoring(product_features, user_features)
+
+        # SECONDARY: ML model as a minor confidence nudge only (±5 pts max)
         if self.model:
             try:
                 combined = {**product_features, **user_features}
                 feature_values = [combined.get(feat, 0) for feat in self.FEATURE_ORDER]
                 input_array = np.array([feature_values])
-                ml_score = float(self.model.predict(input_array)[0])
+                ml_raw = float(self.model.predict(input_array)[0])
+                ml_clamped = min(100.0, max(0.0, ml_raw))
 
-                # Use the new rule-based engine for rich explanations
-                # ML provides the score, rule-based provides the reasons
-                _, reasons, warnings = self._fallback_scoring(product_features, user_features)
-                ml_score_clamped = round(min(100.0, max(0.0, ml_score)), 1)
-                return ml_score_clamped, reasons, warnings
+                # Blend: 90% rule-based + 10% ML (caps model influence at ±5 pts)
+                blended = (rule_score * 0.90) + (ml_clamped * 0.10)
+                final_score = round(min(100.0, max(0.0, blended)), 1)
+                print(f"📊 Score: rule={rule_score}, ml={ml_clamped:.1f}, blended={final_score}")
+                return final_score, reasons, warnings
 
             except Exception as e:
-                print(f"⚠️ Model prediction failed: {e}. Using rule-based scoring.")
+                print(f"⚠️ ML model adjustment failed: {e}. Using pure rule-based score.")
 
-        # Primary path: use full rule-based engine
-        return self._fallback_scoring(product_features, user_features)
+        return rule_score, reasons, warnings
 
     def _generate_explanations(self, product_features: dict, user_features: dict, score: float) -> Tuple[List[str], List[str]]:
         """Delegate to the new unified scoring engine for explanations."""

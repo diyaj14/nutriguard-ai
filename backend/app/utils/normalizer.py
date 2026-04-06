@@ -19,6 +19,7 @@ def clean_nutrient_value(value: Any) -> float:
 
 def normalize_nutrition(nutrition_data: Dict[str, Any]) -> Dict[str, float]:
     """Extracts and normalizes nutrition data to per 100g."""
+    sodium = clean_nutrient_value(nutrition_data.get("sodium_100g", nutrition_data.get("sodium")))
     normalized = {
         "energy_kcal_100g": clean_nutrient_value(nutrition_data.get("energy-kcal_100g", nutrition_data.get("energy-kcal"))),
         "fat_100g": clean_nutrient_value(nutrition_data.get("fat_100g", nutrition_data.get("fat"))),
@@ -26,7 +27,8 @@ def normalize_nutrition(nutrition_data: Dict[str, Any]) -> Dict[str, float]:
         "carbohydrates_100g": clean_nutrient_value(nutrition_data.get("carbohydrates_100g", nutrition_data.get("carbohydrates"))),
         "sugars_100g": clean_nutrient_value(nutrition_data.get("sugars_100g", nutrition_data.get("sugars"))),
         "proteins_100g": clean_nutrient_value(nutrition_data.get("proteins_100g", nutrition_data.get("proteins"))),
-        "sodium_100g": clean_nutrient_value(nutrition_data.get("sodium_100g", nutrition_data.get("sodium"))),
+        "sodium_100g": sodium,
+        "salt_100g": round(sodium * 2.5, 4),   # WHO standard: salt = sodium × 2.5
         "fiber_100g": clean_nutrient_value(nutrition_data.get("fiber_100g", nutrition_data.get("fiber"))),
     }
     return normalized
