@@ -3,8 +3,8 @@
 AI-powered personalized food suitability engine that analyzes products based on your health profile.
 
 ## 🚀 Live Demo
-- **Frontend**: [Your Vercel/Render URL]
-- **Backend API**: [Your Render URL]
+- **Frontend**: https://nutriguard-ai.vercel.app/
+- **Backend API**: https://nutriguard-backend-i175.onrender.com/
 
 ## 📱 Features
 - 🎯 Personalized health scoring
@@ -39,7 +39,7 @@ npm run dev
 
 ### Frontend (.env)
 ```
-VITE_API_URL=https://your-backend-url.onrender.com
+VITE_API_URL=https://nutriguard-backend-i175.onrender.com/
 ```
 
 ## 📄 License
